@@ -18,6 +18,12 @@ extension UIView {
         self.anchor(top: view.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0)
         
     }
+
+    func pinToSafeAreaEdges(ofView view: UIView) {
+        translatesAutoresizingMaskIntoConstraints = false
+        self.anchor(top: view.topAnchor, paddingTop: 40, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0)
+        
+    }
     
     func anchor(top: NSLayoutYAxisAnchor?, paddingTop: CGFloat,
                 bottom: NSLayoutYAxisAnchor?, paddingBottom: CGFloat,

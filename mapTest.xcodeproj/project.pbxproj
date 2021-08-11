@@ -16,7 +16,6 @@
 		8D674B5826C4093100116CBD /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B5726C4093100116CBD /* UIView.swift */; };
 		8D674B6226C40A0B00116CBD /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B6126C40A0B00116CBD /* ListViewController.swift */; };
 		8D674B6C26C40A9500116CBD /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */; };
-		8D674B6D26C40A9500116CBD /* ListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D674B6B26C40A9500116CBD /* ListTableViewCell.xib */; };
 		8D674B7226C40AD700116CBD /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B7126C40AD700116CBD /* DetailViewController.swift */; };
 		8D674B7B26C410C200116CBD /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B7A26C410C200116CBD /* HomeViewController.swift */; };
 		8D674B8026C41FBB00116CBD /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D674B7F26C41FBB00116CBD /* Colors.xcassets */; };
@@ -38,7 +37,6 @@
 		8D674B5726C4093100116CBD /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		8D674B6126C40A0B00116CBD /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
-		8D674B6B26C40A9500116CBD /* ListTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListTableViewCell.xib; sourceTree = "<group>"; };
 		8D674B7126C40AD700116CBD /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		8D674B7A26C410C200116CBD /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		8D674B7F26C41FBB00116CBD /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
@@ -173,7 +171,6 @@
 			isa = PBXGroup;
 			children = (
 				8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */,
-				8D674B6B26C40A9500116CBD /* ListTableViewCell.xib */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -255,7 +252,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D20A46226C354F9009DF8BF /* LaunchScreen.storyboard in Resources */,
-				8D674B6D26C40A9500116CBD /* ListTableViewCell.xib in Resources */,
 				8D674B8026C41FBB00116CBD /* Colors.xcassets in Resources */,
 				8D20A45F26C354F9009DF8BF /* Assets.xcassets in Resources */,
 			);
