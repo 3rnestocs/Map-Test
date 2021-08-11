@@ -3,25 +3,47 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7AE136200858B1FC510ACC10 /* Pods_mapTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8976B42929F538FE4DAC312C /* Pods_mapTest.framework */; };
 		8D20A45626C354F8009DF8BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D20A45526C354F8009DF8BF /* AppDelegate.swift */; };
 		8D20A45826C354F8009DF8BF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D20A45726C354F8009DF8BF /* SceneDelegate.swift */; };
-		8D20A45A26C354F8009DF8BF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D20A45926C354F8009DF8BF /* ViewController.swift */; };
+		8D20A45A26C354F8009DF8BF /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D20A45926C354F8009DF8BF /* MapViewController.swift */; };
 		8D20A45F26C354F9009DF8BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D20A45E26C354F9009DF8BF /* Assets.xcassets */; };
 		8D20A46226C354F9009DF8BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D20A46026C354F9009DF8BF /* LaunchScreen.storyboard */; };
+		8D674B5826C4093100116CBD /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B5726C4093100116CBD /* UIView.swift */; };
+		8D674B6226C40A0B00116CBD /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B6126C40A0B00116CBD /* ListViewController.swift */; };
+		8D674B6C26C40A9500116CBD /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */; };
+		8D674B6D26C40A9500116CBD /* ListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D674B6B26C40A9500116CBD /* ListTableViewCell.xib */; };
+		8D674B7226C40AD700116CBD /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B7126C40AD700116CBD /* DetailViewController.swift */; };
+		8D674B7B26C410C200116CBD /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B7A26C410C200116CBD /* HomeViewController.swift */; };
+		8D674B8026C41FBB00116CBD /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D674B7F26C41FBB00116CBD /* Colors.xcassets */; };
+		8D674B8526C420CE00116CBD /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B8426C420CE00116CBD /* UIImage.swift */; };
+		8D674B8826C420F300116CBD /* UITabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B8726C420F300116CBD /* UITabBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		409A81E926D1E1D410FE5404 /* Pods-mapTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mapTest.release.xcconfig"; path = "Target Support Files/Pods-mapTest/Pods-mapTest.release.xcconfig"; sourceTree = "<group>"; };
+		81A074A2D70386531218EF5C /* Pods-mapTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mapTest.debug.xcconfig"; path = "Target Support Files/Pods-mapTest/Pods-mapTest.debug.xcconfig"; sourceTree = "<group>"; };
+		8976B42929F538FE4DAC312C /* Pods_mapTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mapTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D20A45226C354F8009DF8BF /* mapTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mapTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D20A45526C354F8009DF8BF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8D20A45726C354F8009DF8BF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		8D20A45926C354F8009DF8BF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8D20A45926C354F8009DF8BF /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		8D20A45E26C354F9009DF8BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D20A46126C354F9009DF8BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D20A46326C354F9009DF8BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D674B5726C4093100116CBD /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
+		8D674B6126C40A0B00116CBD /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
+		8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
+		8D674B6B26C40A9500116CBD /* ListTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListTableViewCell.xib; sourceTree = "<group>"; };
+		8D674B7126C40AD700116CBD /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		8D674B7A26C410C200116CBD /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		8D674B7F26C41FBB00116CBD /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		8D674B8426C420CE00116CBD /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
+		8D674B8726C420F300116CBD /* UITabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +51,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AE136200858B1FC510ACC10 /* Pods_mapTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6B55A29A91D837FF127B9AFD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8976B42929F538FE4DAC312C /* Pods_mapTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8D20A44926C354F8009DF8BF = {
 			isa = PBXGroup;
 			children = (
 				8D20A45426C354F8009DF8BF /* mapTest */,
 				8D20A45326C354F8009DF8BF /* Products */,
+				D1775AB933B1A2B0B0D01C07 /* Pods */,
+				6B55A29A91D837FF127B9AFD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,14 +87,112 @@
 		8D20A45426C354F8009DF8BF /* mapTest */ = {
 			isa = PBXGroup;
 			children = (
-				8D20A45526C354F8009DF8BF /* AppDelegate.swift */,
-				8D20A45726C354F8009DF8BF /* SceneDelegate.swift */,
-				8D20A45926C354F8009DF8BF /* ViewController.swift */,
-				8D20A45E26C354F9009DF8BF /* Assets.xcassets */,
-				8D20A46026C354F9009DF8BF /* LaunchScreen.storyboard */,
 				8D20A46326C354F9009DF8BF /* Info.plist */,
+				8D674B5526C408ED00116CBD /* Models */,
+				8D674B5426C408E500116CBD /* Views */,
+				8D674B5326C408DC00116CBD /* ViewModels */,
+				8D674B5226C408CF00116CBD /* Common */,
+				8D674B5626C4091000116CBD /* Resources */,
 			);
 			path = mapTest;
+			sourceTree = "<group>";
+		};
+		8D674B5226C408CF00116CBD /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				8D20A45526C354F8009DF8BF /* AppDelegate.swift */,
+				8D20A45726C354F8009DF8BF /* SceneDelegate.swift */,
+				8D20A46026C354F9009DF8BF /* LaunchScreen.storyboard */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		8D674B5326C408DC00116CBD /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8D674B5426C408E500116CBD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8D674B7A26C410C200116CBD /* HomeViewController.swift */,
+				8D674B6026C409BB00116CBD /* MapViewController */,
+				8D674B6826C40A5900116CBD /* ListViewController */,
+				8D674B7026C40AA700116CBD /* DetailViewController */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8D674B5526C408ED00116CBD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8D674B5626C4091000116CBD /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8D20A45E26C354F9009DF8BF /* Assets.xcassets */,
+				8D674B7F26C41FBB00116CBD /* Colors.xcassets */,
+				8D674B5A26C4093700116CBD /* Extensions */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		8D674B5A26C4093700116CBD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8D674B5726C4093100116CBD /* UIView.swift */,
+				8D674B8426C420CE00116CBD /* UIImage.swift */,
+				8D674B8726C420F300116CBD /* UITabBar.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		8D674B6026C409BB00116CBD /* MapViewController */ = {
+			isa = PBXGroup;
+			children = (
+				8D20A45926C354F8009DF8BF /* MapViewController.swift */,
+			);
+			path = MapViewController;
+			sourceTree = "<group>";
+		};
+		8D674B6826C40A5900116CBD /* ListViewController */ = {
+			isa = PBXGroup;
+			children = (
+				8D674B6926C40A6600116CBD /* Cell */,
+				8D674B6126C40A0B00116CBD /* ListViewController.swift */,
+			);
+			path = ListViewController;
+			sourceTree = "<group>";
+		};
+		8D674B6926C40A6600116CBD /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */,
+				8D674B6B26C40A9500116CBD /* ListTableViewCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		8D674B7026C40AA700116CBD /* DetailViewController */ = {
+			isa = PBXGroup;
+			children = (
+				8D674B7126C40AD700116CBD /* DetailViewController.swift */,
+			);
+			path = DetailViewController;
+			sourceTree = "<group>";
+		};
+		D1775AB933B1A2B0B0D01C07 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				81A074A2D70386531218EF5C /* Pods-mapTest.debug.xcconfig */,
+				409A81E926D1E1D410FE5404 /* Pods-mapTest.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +202,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8D20A46626C354F9009DF8BF /* Build configuration list for PBXNativeTarget "mapTest" */;
 			buildPhases = (
+				C374805DE63CF30E179DF090 /* [CP] Check Pods Manifest.lock */,
 				8D20A44E26C354F8009DF8BF /* Sources */,
 				8D20A44F26C354F8009DF8BF /* Frameworks */,
 				8D20A45026C354F8009DF8BF /* Resources */,
+				35BE07836ED2379FC2399989 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -122,20 +255,71 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D20A46226C354F9009DF8BF /* LaunchScreen.storyboard in Resources */,
+				8D674B6D26C40A9500116CBD /* ListTableViewCell.xib in Resources */,
+				8D674B8026C41FBB00116CBD /* Colors.xcassets in Resources */,
 				8D20A45F26C354F9009DF8BF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		35BE07836ED2379FC2399989 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mapTest/Pods-mapTest-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mapTest/Pods-mapTest-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mapTest/Pods-mapTest-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C374805DE63CF30E179DF090 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-mapTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8D20A44E26C354F8009DF8BF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D20A45A26C354F8009DF8BF /* ViewController.swift in Sources */,
+				8D20A45A26C354F8009DF8BF /* MapViewController.swift in Sources */,
+				8D674B8826C420F300116CBD /* UITabBar.swift in Sources */,
 				8D20A45626C354F8009DF8BF /* AppDelegate.swift in Sources */,
 				8D20A45826C354F8009DF8BF /* SceneDelegate.swift in Sources */,
+				8D674B7B26C410C200116CBD /* HomeViewController.swift in Sources */,
+				8D674B6226C40A0B00116CBD /* ListViewController.swift in Sources */,
+				8D674B5826C4093100116CBD /* UIView.swift in Sources */,
+				8D674B8526C420CE00116CBD /* UIImage.swift in Sources */,
+				8D674B6C26C40A9500116CBD /* ListTableViewCell.swift in Sources */,
+				8D674B7226C40AD700116CBD /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,6 +455,7 @@
 		};
 		8D20A46726C354F9009DF8BF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 81A074A2D70386531218EF5C /* Pods-mapTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -289,6 +474,7 @@
 		};
 		8D20A46826C354F9009DF8BF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 409A81E926D1E1D410FE5404 /* Pods-mapTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

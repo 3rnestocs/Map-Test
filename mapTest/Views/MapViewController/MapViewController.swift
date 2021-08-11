@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MapViewController.swift
 //  mapTest
 //
 //  Created by Ernesto Jose Contreras Lopez on 8/10/21.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MapViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     }
 
     private func setupUI() {
-        self.view.backgroundColor = .gray
+        self.view.backgroundColor = UIColor(named: "background")
     }
 }
 
