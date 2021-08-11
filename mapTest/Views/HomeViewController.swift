@@ -14,36 +14,43 @@ class HomeViewController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setup()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.setupTabChilds()
-        self.setupBars()
+        self.setupNavigationBar()
     }
 
-    private func setupBars() {
+    private func setup() {
+        self.setupTabBar()
+    }
+
+    private func setupNavigationBar() {
         let img = UIImage()
         self.navigationController?.navigationBar.setBackgroundImage(img, for: .default)
         self.navigationController?.navigationBar.shadowImage = img
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.view.backgroundColor = .clear
+    }
 
+    private func setupTabBar() {
         self.tabBar.barTintColor = UIColor(named: "mainBlack")
         self.tabBar.tintColor = UIColor(named: "mainRed")
         self.tabBar.unselectedItemTintColor = UIColor(named: "mainWhite")
         self.tabBar.isTranslucent = false
+        self.setupTabBarViewControllers()
         self.createSeparatorsBetweenItems()
     }
 
-    private func setupTabChilds() {
+    private func setupTabBarViewControllers() {
         if mapViewController == nil, listViewController == nil {
             self.mapViewController = MapViewController()
             self.listViewController = ListViewController()
         }
 
-        self.createTabBarItem(viewController: mapViewController, itemImage: UIImage(named: "map")!)
-        self.createTabBarItem(viewController: listViewController, itemImage: UIImage(named: "list")!)
+        createTabBarItem(viewController: mapViewController, itemImage: UIImage(named: "map")!, title: "Map")
+        createTabBarItem(viewController: listViewController, itemImage: UIImage(named: "list")!, title: "List")
 
         guard let tabOne = self.mapViewController,
               let tabTwo = self.listViewController
