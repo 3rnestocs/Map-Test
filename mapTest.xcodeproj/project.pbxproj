@@ -21,6 +21,7 @@
 		8D674B8026C41FBB00116CBD /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D674B7F26C41FBB00116CBD /* Colors.xcassets */; };
 		8D674B8526C420CE00116CBD /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B8426C420CE00116CBD /* UIImage.swift */; };
 		8D674B8826C420F300116CBD /* UITabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B8726C420F300116CBD /* UITabBar.swift */; };
+		8D7A65E426C5A27E00461D2D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65E326C5A27E00461D2D /* LocationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		8D674B7F26C41FBB00116CBD /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		8D674B8426C420CE00116CBD /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		8D674B8726C420F300116CBD /* UITabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBar.swift; sourceTree = "<group>"; };
+		8D7A65E326C5A27E00461D2D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				8D20A45926C354F8009DF8BF /* MapViewController.swift */,
+				8D7A65E326C5A27E00461D2D /* LocationManager.swift */,
 			);
 			path = MapViewController;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 				8D20A44F26C354F8009DF8BF /* Frameworks */,
 				8D20A45026C354F8009DF8BF /* Resources */,
 				35BE07836ED2379FC2399989 /* [CP] Copy Pods Resources */,
+				03138997413683E43AA289D2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -260,6 +264,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		03138997413683E43AA289D2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mapTest/Pods-mapTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mapTest/Pods-mapTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mapTest/Pods-mapTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		35BE07836ED2379FC2399989 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -309,6 +330,7 @@
 				8D20A45A26C354F8009DF8BF /* MapViewController.swift in Sources */,
 				8D674B8826C420F300116CBD /* UITabBar.swift in Sources */,
 				8D20A45626C354F8009DF8BF /* AppDelegate.swift in Sources */,
+				8D7A65E426C5A27E00461D2D /* LocationManager.swift in Sources */,
 				8D20A45826C354F8009DF8BF /* SceneDelegate.swift in Sources */,
 				8D674B7B26C410C200116CBD /* HomeViewController.swift in Sources */,
 				8D674B6226C40A0B00116CBD /* ListViewController.swift in Sources */,
