@@ -38,6 +38,7 @@ class MapViewModel: MapViewModelType {
     }
 
     private func focusUserLocation(userLocation: CLLocationCoordinate2D, mapVC: MapViewController) {
+        mapVC.createMarkerOnUserLocation()
         let camera = GMSCameraPosition(target: userLocation, zoom: 4)
         let update = GMSCameraUpdate.setCamera(camera)
         mapVC.mapView.moveCamera(update)
@@ -46,7 +47,6 @@ class MapViewModel: MapViewModelType {
     private func updateMap(locations: [CLLocationCoordinate2D]) {
         if let mapVC = self.mapViewController {
             self.focusUserLocation(userLocation: locations[0], mapVC: mapVC)
-            mapVC.setupMarkers(source: locations[0], destination: locations[1])
         }
     }
 
@@ -89,23 +89,27 @@ class MapViewModel: MapViewModelType {
     // MARK: - Helpers
     func animateRoutes() {
         if let mapVC = self.mapViewController {
-            self.routeLocations.removeAll()
-            self.polyLine = nil
+            self.cleanMapShapes(mapVC: mapVC)
             for (index, step) in steps!.enumerated() {
                 let point = step.polyline.points
                 let path = GMSPath.init(fromEncodedPath: point)!
                 let pathLocation = path.coordinate(at: UInt(index))
                 
                 if pathLocation.latitude != -180.0, pathLocation.longitude != -180.0 {
-                    self.routeLocations.append(path.coordinate(at: UInt(index)))
+                    self.routeLocations.append(path.coordinate(at: 1))
                 }
                 self.polyLine = GMSPolyline.init(path: path)
-                self.polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.3)
+                self.polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.5)
                 self.polyLine.strokeWidth = 5
-                self.polyLine.geodesic = true
                 self.polyLine.map = mapVC.mapView
             }
         }
+    }
+
+    private func cleanMapShapes(mapVC: MapViewController) {
+        self.routeLocations.removeAll()
+        mapVC.mapView.clear()
+        mapVC.createMarkerOnUserLocation()
     }
 }
 

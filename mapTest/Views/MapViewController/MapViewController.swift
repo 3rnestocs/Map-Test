@@ -79,14 +79,26 @@ class MapViewController: UIViewController {
         self.mapView.moveCamera(update)
     }
 
-    func setupMarkers(source: CLLocationCoordinate2D, destination: CLLocationCoordinate2D) {
+    func createMarkerOnUserLocation() {
         let sourceMarker = GMSMarker()
-        sourceMarker.position = source
+        sourceMarker.position = self.viewModel.getLocations()[0]
+        sourceMarker.icon = markerIcon(tintColor: UIColor(named: "mainBlack")!)
         sourceMarker.map = self.mapView
-        
+    }
+
+    private func setupDestinationMarker() {
         let destinationMarker = GMSMarker()
-        destinationMarker.position = destination
+        destinationMarker.position = self.viewModel.getLocations()[1]
+        destinationMarker.icon = markerIcon(tintColor: UIColor(named: "mainRed")!)
         destinationMarker.map = self.mapView
+    }
+
+    private func markerIcon(tintColor: UIColor) -> UIImage {
+        guard let marker = UIImage(named: "pin")?.withTintColor(tintColor)
+                .imageWith(newSize: CGSize(width: 32, height: 32)) else {
+            return UIImage()
+        }
+        return marker
     }
 
     func handleShapeAnimationEnd() {
@@ -94,6 +106,7 @@ class MapViewController: UIViewController {
         self.shapeLayer.removeAllAnimations()
         self.viewModel.updatePolylineAfterAnimation()
         self.mapView.animate(toLocation: self.viewModel.getLocations()[1])
+        self.setupDestinationMarker()
     }
 
     // MARK: - CAShapeLayer
