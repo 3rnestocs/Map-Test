@@ -47,6 +47,7 @@ class HomeViewController: UITabBarController {
         if mapViewController == nil, listViewController == nil {
             self.mapViewController = MapViewController()
             self.listViewController = ListViewController()
+            self.mapViewController?.delegate = self
         }
 
         createTabBarItem(viewController: mapViewController, itemImage: UIImage(named: "map")!, title: "Map")
@@ -57,5 +58,15 @@ class HomeViewController: UITabBarController {
         else { return }
 
         self.viewControllers = [tabOne, tabTwo]
+    }
+}
+
+extension HomeViewController: MapViewAlertTextDelegate {
+    func didSubmitRouteName(routeData: UserRoute) {
+        if self.listViewController?.routeDatasource == nil {
+            self.listViewController?.routeDatasource = [routeData]
+        } else {
+            self.listViewController?.routeDatasource?.append(routeData)
+        }
     }
 }

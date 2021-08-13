@@ -10,11 +10,14 @@ import UIKit
 class ListViewController: UIViewController {
 
     private let tableView = UITableView()
-    private var sampleDataSource = 16
+    var routeDatasource: [UserRoute]? {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor(named: "background")
         self.setup()
     }
 
@@ -39,7 +42,7 @@ class ListViewController: UIViewController {
 
 extension ListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.sampleDataSource
+        self.routeDatasource?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -57,7 +60,9 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
 
         cell.selectionStyle = .none
         cell.accessoryType = .disclosureIndicator
-        cell.configureCell(kilometers: 200, route: "Went from London to Spain")
+        if let userRoute = routeDatasource?[indexPath.row] {
+            cell.configureCell(kilometers: userRoute.distance, route: userRoute.name)
+        }
         return cell
     }
 }

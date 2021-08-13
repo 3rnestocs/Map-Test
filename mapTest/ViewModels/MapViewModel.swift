@@ -21,8 +21,9 @@ class MapViewModel: MapViewModelType {
     private let locationManager = LocationManager()
     private var locations: [CLLocationCoordinate2D]?
     private var routes: [Route]?
-    private var steps: [Step]?
-    var polyLine: GMSPolyline!
+    var steps: [Step]!
+    var leg: Leg!
+    private var polyLine: GMSPolyline!
     var routeLocations = [CLLocationCoordinate2D]()
 
     // MARK: - Init
@@ -38,7 +39,7 @@ class MapViewModel: MapViewModelType {
     }
 
     private func focusUserLocation(userLocation: CLLocationCoordinate2D, mapVC: MapViewController) {
-        mapVC.createMarkerOnUserLocation()
+
         let camera = GMSCameraPosition(target: userLocation, zoom: 4)
         let update = GMSCameraUpdate.setCamera(camera)
         mapVC.mapView.moveCamera(update)
@@ -73,8 +74,10 @@ class MapViewModel: MapViewModelType {
     }
 
     func getAllRoutes() {
-        if let routes = self.routes {
+        if let routes = self.routes,
+           !routes.isEmpty {
             let leg = routes.first?.legs.first
+            self.leg = leg
             guard let stepPoints = leg?.steps else { return }
             self.steps = stepPoints
         }
@@ -90,7 +93,7 @@ class MapViewModel: MapViewModelType {
     func animateRoutes() {
         if let mapVC = self.mapViewController {
             self.cleanMapShapes(mapVC: mapVC)
-            for (index, step) in steps!.enumerated() {
+            for (index, step) in steps.enumerated() {
                 let point = step.polyline.points
                 let path = GMSPath.init(fromEncodedPath: point)!
                 let pathLocation = path.coordinate(at: UInt(index))

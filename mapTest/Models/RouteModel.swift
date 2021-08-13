@@ -59,6 +59,7 @@ struct Step: Codable {
     var distance: Amount
     var polyline: Polyline
     var startLocation, endLocation: Location
+
     enum CodingKeys: String, CodingKey {
         case duration, distance, polyline
         case startLocation = "start_location"

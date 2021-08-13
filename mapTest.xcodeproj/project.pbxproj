@@ -13,6 +13,7 @@
 		8D20A45A26C354F8009DF8BF /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D20A45926C354F8009DF8BF /* MapViewController.swift */; };
 		8D20A45F26C354F9009DF8BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D20A45E26C354F9009DF8BF /* Assets.xcassets */; };
 		8D20A46226C354F9009DF8BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D20A46026C354F9009DF8BF /* LaunchScreen.storyboard */; };
+		8D306CE126C6AD28004DA9AD /* UserRouteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D306CE026C6AD28004DA9AD /* UserRouteModel.swift */; };
 		8D674B5826C4093100116CBD /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B5726C4093100116CBD /* UIView.swift */; };
 		8D674B6226C40A0B00116CBD /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B6126C40A0B00116CBD /* ListViewController.swift */; };
 		8D674B6C26C40A9500116CBD /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */; };
@@ -38,6 +39,7 @@
 		8D20A45E26C354F9009DF8BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D20A46126C354F9009DF8BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D20A46326C354F9009DF8BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D306CE026C6AD28004DA9AD /* UserRouteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRouteModel.swift; sourceTree = "<group>"; };
 		8D674B5726C4093100116CBD /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		8D674B6126C40A0B00116CBD /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		8D674B6A26C40A9500116CBD /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				8D7A65E926C5BCA000461D2D /* RouteModel.swift */,
+				8D306CE026C6AD28004DA9AD /* UserRouteModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 			files = (
 				8D7A65EF26C5C39300461D2D /* ApiClient.swift in Sources */,
 				8D20A45A26C354F8009DF8BF /* MapViewController.swift in Sources */,
+				8D306CE126C6AD28004DA9AD /* UserRouteModel.swift in Sources */,
 				8D674B8826C420F300116CBD /* UITabBar.swift in Sources */,
 				8D20A45626C354F8009DF8BF /* AppDelegate.swift in Sources */,
 				8D7A65EA26C5BCA000461D2D /* RouteModel.swift in Sources */,

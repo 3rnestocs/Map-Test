@@ -14,6 +14,10 @@ protocol MapViewControllerDelegate: class {
     func routeDrawingFailure()
 }
 
+protocol MapViewAlertTextDelegate: class {
+    func didSubmitRouteName(routeData: UserRoute)
+}
+
 class MapViewController: UIViewController {
     
     // MARK: - Properties
@@ -21,6 +25,7 @@ class MapViewController: UIViewController {
     public var mapView: GMSMapView!
     public var viewModel: MapViewModel!
     private var shapeLayer: CAShapeLayer!
+    weak var delegate: MapViewAlertTextDelegate?
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -71,6 +76,21 @@ class MapViewController: UIViewController {
         self.animatePath(shapeLayer)
         self.mapView.layer.addSublayer(shapeLayer)
     }
+
+    private func createAlertInput() {
+        let alert = UIAlertController(title: "Where did you go?", message: "Type your route name", preferredStyle: .alert)
+        alert.addTextField { _ in }
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
+            if let textField = alert?.textFields?[0],
+               let text = textField.text {
+                let step = self.viewModel.steps.last
+                let routeData = UserRoute(name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "", route: self.viewModel.leg.startAddress)
+                self.delegate?.didSubmitRouteName(routeData: routeData)
+            }
+        }))
+
+        self.present(alert, animated: true, completion: nil)
+    }
     
     // MARK: - Helpers
     private func followRoute() {
@@ -104,9 +124,10 @@ class MapViewController: UIViewController {
     func handleShapeAnimationEnd() {
         self.shapeLayer.removeFromSuperlayer()
         self.shapeLayer.removeAllAnimations()
+        self.setupDestinationMarker()
         self.viewModel.updatePolylineAfterAnimation()
         self.mapView.animate(toLocation: self.viewModel.getLocations()[1])
-        self.setupDestinationMarker()
+        self.createAlertInput()
     }
 
     // MARK: - CAShapeLayer
