@@ -10,33 +10,47 @@ import GoogleMaps
 
 protocol MapViewModelType: class {
     func getLocations() -> [CLLocationCoordinate2D]
-    func drawRouteOnMap()
+    func getAllRoutes()
+    func updatePolylineAfterAnimation()
 }
 
 class MapViewModel: MapViewModelType {
+    // MARK: - Properties
     weak var delegate: MapViewControllerDelegate?
     private var mapViewController: MapViewController!
     private let locationManager = LocationManager()
     private var locations: [CLLocationCoordinate2D]?
     private var routes: [Route]?
+    private var steps: [Step]?
+    var polyLine: GMSPolyline!
+    var routeLocations = [CLLocationCoordinate2D]()
 
+    // MARK: - Init
     init(viewController: MapViewController) {
         self.mapViewController = viewController
         self.setupLocation()
     }
 
+    // MARK: - Location setup
     private func setupLocation() {
         locationManager.delegate = self
         locationManager.getCurrentLocation()
     }
 
+    private func focusUserLocation(userLocation: CLLocationCoordinate2D, mapVC: MapViewController) {
+        let camera = GMSCameraPosition(target: userLocation, zoom: 4)
+        let update = GMSCameraUpdate.setCamera(camera)
+        mapVC.mapView.moveCamera(update)
+    }
+
     private func updateMap(locations: [CLLocationCoordinate2D]) {
         if let mapVC = self.mapViewController {
-            mapVC.focusUserLocation(userLocation: locations[0])
+            self.focusUserLocation(userLocation: locations[0], mapVC: mapVC)
             mapVC.setupMarkers(source: locations[0], destination: locations[1])
         }
     }
 
+    // MARK: - Routes fetching
     func fetchRoutes() {
         ApiClient.shared.requestPlaces(locations: getLocations(), completion: { result in
             switch result {
@@ -50,6 +64,7 @@ class MapViewModel: MapViewModelType {
         })
     }
 
+    // MARK: - MapViewModelType methods
     func getLocations() -> [CLLocationCoordinate2D] {
         guard let locations = self.locations else { return
             [CLLocationCoordinate2D]()
@@ -57,18 +72,38 @@ class MapViewModel: MapViewModelType {
         return locations
     }
 
-    func drawRouteOnMap() {
-        if let mapVC = self.mapViewController, let routes = self.routes {
+    func getAllRoutes() {
+        if let routes = self.routes {
             let leg = routes.first?.legs.first
             guard let stepPoints = leg?.steps else { return }
-            for step in stepPoints {
+            self.steps = stepPoints
+        }
+    }
+
+    func updatePolylineAfterAnimation() {
+        // This has a bug, it doesn't update the polyline's color when the animation finishes
+        self.polyLine.spans = [GMSStyleSpan(color: UIColor(named: "mainRed")!)]
+        self.polyLine.strokeColor = .red
+    }
+
+    // MARK: - Helpers
+    func animateRoutes() {
+        if let mapVC = self.mapViewController {
+            self.routeLocations.removeAll()
+            self.polyLine = nil
+            for (index, step) in steps!.enumerated() {
                 let point = step.polyline.points
                 let path = GMSPath.init(fromEncodedPath: point)!
-//                self.pathArray.append(path)
-                let polyline = GMSPolyline.init(path: path)
-                polyline.strokeColor = UIColor(named: "mainRed")!
-                polyline.strokeWidth = 5
-                polyline.map = mapVC.mapView
+                let pathLocation = path.coordinate(at: UInt(index))
+                
+                if pathLocation.latitude != -180.0, pathLocation.longitude != -180.0 {
+                    self.routeLocations.append(path.coordinate(at: UInt(index)))
+                }
+                self.polyLine = GMSPolyline.init(path: path)
+                self.polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.3)
+                self.polyLine.strokeWidth = 5
+                self.polyLine.geodesic = true
+                self.polyLine.map = mapVC.mapView
             }
         }
     }

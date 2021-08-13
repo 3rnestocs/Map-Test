@@ -8,7 +8,6 @@
 import UIKit
 import GoogleMaps
 import Alamofire
-import SwiftyJSON
 
 protocol MapViewControllerDelegate: class {
     func routeDrawingSuccess()
@@ -17,10 +16,13 @@ protocol MapViewControllerDelegate: class {
 
 class MapViewController: UIViewController {
     
+    // MARK: - Properties
     private let startButton = UIButton(type: .system)
     public var mapView: GMSMapView!
     public var viewModel: MapViewModel!
+    private var shapeLayer: CAShapeLayer!
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setup()
@@ -31,6 +33,7 @@ class MapViewController: UIViewController {
         startButton.layer.cornerRadius = startButton.frame.height / 2
     }
     
+    // MARK: - Setup
     private func setup() {
         self.setupVM()
         self.setupMap()
@@ -48,6 +51,7 @@ class MapViewController: UIViewController {
     
     private func setupMap() {
         self.mapView = GMSMapView(frame: self.view.bounds)
+        self.mapView.delegate = self
         self.view.addSubview(mapView)
     }
 
@@ -61,19 +65,16 @@ class MapViewController: UIViewController {
         startButton.backgroundColor = UIColor(named: "mainBlack")
         startButton.addTarget(self, action: #selector(self.didTapStartButton(_:)), for: .touchUpInside)
     }
+
+    func setupShape() {
+        self.shapeLayer = self.layer()
+        self.animatePath(shapeLayer)
+        self.mapView.layer.addSublayer(shapeLayer)
+    }
     
-    @objc private func didTapStartButton(_ sender: UIButton) {
-        self.viewModel.fetchRoutes()
-    }
-
+    // MARK: - Helpers
     private func followRoute() {
-        let camera = GMSCameraPosition(target: viewModel.getLocations()[1], zoom: 10)
-        let update = GMSCameraUpdate.setCamera(camera)
-        self.mapView.moveCamera(update)
-    }
-
-    func focusUserLocation(userLocation: CLLocationCoordinate2D) {
-        let camera = GMSCameraPosition(target: userLocation, zoom: 10)
+        let camera = GMSCameraPosition(target: viewModel.getLocations()[1], zoom: 4)
         let update = GMSCameraUpdate.setCamera(camera)
         self.mapView.moveCamera(update)
     }
@@ -87,13 +88,64 @@ class MapViewController: UIViewController {
         destinationMarker.position = destination
         destinationMarker.map = self.mapView
     }
+
+    func handleShapeAnimationEnd() {
+        self.shapeLayer.removeFromSuperlayer()
+        self.shapeLayer.removeAllAnimations()
+        self.viewModel.updatePolylineAfterAnimation()
+        self.mapView.animate(toLocation: self.viewModel.getLocations()[1])
+    }
+
+    // MARK: - CAShapeLayer
+    func layer() -> CAShapeLayer {
+        let breizerPath = UIBezierPath()
+        let firstCoordinate = self.viewModel.routeLocations[0]
+        breizerPath.move(to: self.mapView.projection.point(for: firstCoordinate))
+        for i in self.viewModel.routeLocations {
+            let coordinate: CLLocationCoordinate2D = i
+            breizerPath.addLine(to: self.mapView.projection.point(for: coordinate))
+        }
+
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = breizerPath.cgPath
+        shapeLayer.strokeColor = UIColor(named: "mainRed")!.cgColor
+        shapeLayer.lineWidth = 5.0
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        return shapeLayer
+    }
+
+    func animatePath(_ layer: CAShapeLayer) {
+        CATransaction.begin()
+        let pathAnimation = CABasicAnimation(keyPath: "strokeEnd")
+        pathAnimation.duration = 5
+        pathAnimation.timingFunction = CAMediaTimingFunction(name: .linear)
+        pathAnimation.fromValue = Int(0.0)
+        pathAnimation.toValue = Int(1.0)
+        
+        CATransaction.setCompletionBlock {
+            self.handleShapeAnimationEnd()
+        }
+
+        layer.add(pathAnimation, forKey: "strokeEnd")
+        CATransaction.commit()
+    }
+
+    // MARK: - Actions
+    @objc private func didTapStartButton(_ sender: UIButton) {
+        self.viewModel.fetchRoutes()
+    }
 }
 
-extension MapViewController: MapViewControllerDelegate {
+extension MapViewController: MapViewControllerDelegate, GMSMapViewDelegate {
     func routeDrawingSuccess() {
-        self.viewModel.drawRouteOnMap()
+        UIView.animate(withDuration: 0.05) {
+            self.viewModel.getAllRoutes()
+        } completion: { _ in
+            self.viewModel.animateRoutes()
+            self.setupShape()
+        }
     }
-    
+
     func routeDrawingFailure() {
         print("Nestor failed")
     }

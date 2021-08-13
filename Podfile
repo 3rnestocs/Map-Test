@@ -9,6 +9,5 @@ target 'mapTest' do
 pod 'GooglePlaces'
 pod 'GoogleMaps'
 pod 'Alamofire'
-pod 'SwiftyJSON'
 
 end

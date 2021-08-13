@@ -15,7 +15,8 @@ class LocationManager: NSObject {
 
     // MARK: - Properties
     private var locationManager: CLLocationManager
-    private let destinationLocation = CLLocationCoordinate2D(latitude: 10.063611, longitude: -69.334724)
+//    private let destinationLocation = CLLocationCoordinate2D(latitude: 10.063611, longitude: -69.334724)
+    private let destinationLocation = CLLocationCoordinate2D(latitude: 4.624335, longitude: -74.063644)
     weak var delegate: LocationManagerDelegate?
 
     // MARK: - Initialize
