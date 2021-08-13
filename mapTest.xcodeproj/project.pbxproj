@@ -22,6 +22,9 @@
 		8D674B8526C420CE00116CBD /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B8426C420CE00116CBD /* UIImage.swift */; };
 		8D674B8826C420F300116CBD /* UITabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D674B8726C420F300116CBD /* UITabBar.swift */; };
 		8D7A65E426C5A27E00461D2D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65E326C5A27E00461D2D /* LocationManager.swift */; };
+		8D7A65E726C5A9C600461D2D /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65E626C5A9C600461D2D /* MapViewModel.swift */; };
+		8D7A65EA26C5BCA000461D2D /* RouteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65E926C5BCA000461D2D /* RouteModel.swift */; };
+		8D7A65EF26C5C39300461D2D /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65EE26C5C39300461D2D /* ApiClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +47,9 @@
 		8D674B8426C420CE00116CBD /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		8D674B8726C420F300116CBD /* UITabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBar.swift; sourceTree = "<group>"; };
 		8D7A65E326C5A27E00461D2D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		8D7A65E626C5A9C600461D2D /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		8D7A65E926C5BCA000461D2D /* RouteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteModel.swift; sourceTree = "<group>"; };
+		8D7A65EE26C5C39300461D2D /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +97,7 @@
 				8D674B5526C408ED00116CBD /* Models */,
 				8D674B5426C408E500116CBD /* Views */,
 				8D674B5326C408DC00116CBD /* ViewModels */,
+				8D7A65EC26C5C01B00461D2D /* Networking */,
 				8D674B5226C408CF00116CBD /* Common */,
 				8D674B5626C4091000116CBD /* Resources */,
 			);
@@ -110,6 +117,7 @@
 		8D674B5326C408DC00116CBD /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				8D7A65E626C5A9C600461D2D /* MapViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -128,6 +136,7 @@
 		8D674B5526C408ED00116CBD /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8D7A65E926C5BCA000461D2D /* RouteModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -184,6 +193,14 @@
 				8D674B7126C40AD700116CBD /* DetailViewController.swift */,
 			);
 			path = DetailViewController;
+			sourceTree = "<group>";
+		};
+		8D7A65EC26C5C01B00461D2D /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				8D7A65EE26C5C39300461D2D /* ApiClient.swift */,
+			);
+			path = Networking;
 			sourceTree = "<group>";
 		};
 		D1775AB933B1A2B0B0D01C07 /* Pods */ = {
@@ -327,9 +344,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D7A65EF26C5C39300461D2D /* ApiClient.swift in Sources */,
 				8D20A45A26C354F8009DF8BF /* MapViewController.swift in Sources */,
 				8D674B8826C420F300116CBD /* UITabBar.swift in Sources */,
 				8D20A45626C354F8009DF8BF /* AppDelegate.swift in Sources */,
+				8D7A65EA26C5BCA000461D2D /* RouteModel.swift in Sources */,
 				8D7A65E426C5A27E00461D2D /* LocationManager.swift in Sources */,
 				8D20A45826C354F8009DF8BF /* SceneDelegate.swift in Sources */,
 				8D674B7B26C410C200116CBD /* HomeViewController.swift in Sources */,
@@ -338,6 +357,7 @@
 				8D674B8526C420CE00116CBD /* UIImage.swift in Sources */,
 				8D674B6C26C40A9500116CBD /* ListTableViewCell.swift in Sources */,
 				8D674B7226C40AD700116CBD /* DetailViewController.swift in Sources */,
+				8D7A65E726C5A9C600461D2D /* MapViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,20 +10,20 @@ import GoogleMaps
 import Alamofire
 import SwiftyJSON
 
+protocol MapViewControllerDelegate: class {
+    func routeDrawingSuccess()
+    func routeDrawingFailure()
+}
+
 class MapViewController: UIViewController {
     
     private let startButton = UIButton(type: .system)
     public var mapView: GMSMapView!
-    private var locationManager: LocationManager?
+    public var viewModel: MapViewModel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setup()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.locationManager?.setupLocation()
     }
     
     override func viewDidLayoutSubviews() {
@@ -32,16 +32,14 @@ class MapViewController: UIViewController {
     }
     
     private func setup() {
+        self.setupVM()
         self.setupMap()
-        self.setupLocationManager()
         self.setupUI()
     }
 
-    private func setupLocationManager() {
-        let manager = CLLocationManager()
-        self.locationManager = LocationManager(locationManager: manager, mapVC: self)
-        self.locationManager?.manager.delegate = locationManager
-        self.setupMarkers()
+    private func setupVM() {
+        self.viewModel = MapViewModel(viewController: self)
+        self.viewModel.delegate = self
     }
     
     private func setupUI() {
@@ -65,62 +63,38 @@ class MapViewController: UIViewController {
     }
     
     @objc private func didTapStartButton(_ sender: UIButton) {
-        let source = locationManager!.sourceLocation
-        let destination = locationManager!.destinationLocation
-        let sourceLocation = "\(source.latitude),\(source.longitude)"
-        let destinationLocation = "\(destination.latitude),\(destination.longitude)"
-                
-        let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(sourceLocation)&destination=\(destinationLocation)&mode=driving&key=AIzaSyAFCmJTHfdwUprZHZ7pB48Lj6HlYJwKTXw"
-        if let url = URL(string: urlString) {
-            fetchRequest(url: url)
-            self.followRoute()
-        }
+        self.viewModel.fetchRoutes()
     }
 
     private func followRoute() {
-        let camera = GMSCameraPosition(target: locationManager!.destinationLocation, zoom: 10)
+        let camera = GMSCameraPosition(target: viewModel.getLocations()[1], zoom: 10)
         let update = GMSCameraUpdate.setCamera(camera)
         self.mapView.moveCamera(update)
     }
 
-    private func setupMarkers() {
+    func focusUserLocation(userLocation: CLLocationCoordinate2D) {
+        let camera = GMSCameraPosition(target: userLocation, zoom: 10)
+        let update = GMSCameraUpdate.setCamera(camera)
+        self.mapView.moveCamera(update)
+    }
+
+    func setupMarkers(source: CLLocationCoordinate2D, destination: CLLocationCoordinate2D) {
         let sourceMarker = GMSMarker()
-        sourceMarker.position = locationManager!.sourceLocation
-        sourceMarker.title = "Caracas"
-        sourceMarker.snippet = "Capital de Venezuela"
+        sourceMarker.position = source
         sourceMarker.map = self.mapView
         
         let destinationMarker = GMSMarker()
-        destinationMarker.position = locationManager!.destinationLocation
-        destinationMarker.title = "Barquisimeto"
-        destinationMarker.snippet = "Capital musical venezolana"
+        destinationMarker.position = destination
         destinationMarker.map = self.mapView
     }
+}
 
-    private func fetchRequest(url: URL) {
-        AF.request(url).responseJSON { (reseponse) in
-            guard let data = reseponse.data else {
-                return
-            }
-
-            do {
-                let jsonData = try JSON(data: data)
-                let routes = jsonData["routes"].arrayValue
-                print(jsonData)
-
-                for route in routes {
-                    let overview_polyline = route["overview_polyline"].dictionary
-                    let points = overview_polyline?["points"]?.string
-                    let path = GMSPath.init(fromEncodedPath: points ?? "")
-                    let polyline = GMSPolyline.init(path: path)
-                    polyline.strokeColor = .systemBlue
-                    polyline.strokeWidth = 5
-                    polyline.map = self.mapView
-                }
-            }
-             catch let error {
-                print(error.localizedDescription)
-            }
-        }
+extension MapViewController: MapViewControllerDelegate {
+    func routeDrawingSuccess() {
+        self.viewModel.drawRouteOnMap()
+    }
+    
+    func routeDrawingFailure() {
+        print("Nestor failed")
     }
 }

@@ -5,51 +5,45 @@
 //  Created by Ernesto Jose Contreras Lopez on 8/12/21.
 //
 
-import UIKit
-import GoogleMaps
+import CoreLocation
+
+protocol LocationManagerDelegate: class {
+    func locationManager(_ manager: LocationManager, locations: [CLLocationCoordinate2D])
+}
 
 class LocationManager: NSObject {
-    public var manager: CLLocationManager!
-    let sourceLocation = CLLocationCoordinate2D(latitude: 10.4696404, longitude: -66.8037185)
-    let destinationLocation = CLLocationCoordinate2D(latitude: 10.063611, longitude: -69.334724)
-    private var mapViewController: MapViewController!
-    
-    init(locationManager: CLLocationManager,
-         mapVC: MapViewController) {
-        self.manager = locationManager
-        self.mapViewController = mapVC
+
+    // MARK: - Properties
+    private var locationManager: CLLocationManager
+    private let destinationLocation = CLLocationCoordinate2D(latitude: 10.063611, longitude: -69.334724)
+    weak var delegate: LocationManagerDelegate?
+
+    // MARK: - Initialize
+    override init() {
+        locationManager = CLLocationManager()
     }
 
-    func setupLocation() {
+    // MARK: - Public
+    func getCurrentLocation() {
+        locationManager.distanceFilter = 150
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+
         if CLLocationManager.locationServicesEnabled() {
-            self.manager.requestLocation()
-            self.mapViewController.mapView.isMyLocationEnabled = true
-            self.mapViewController.mapView.settings.myLocationButton = true
-        } else {
-            self.manager.requestWhenInUseAuthorization()
+            locationManager.startUpdatingLocation()
         }
     }
 }
 
 extension LocationManager: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        guard status == .authorizedWhenInUse else {
-            return
-        }
-        self.manager.requestLocation()
-        self.mapViewController.mapView.isMyLocationEnabled = true
-        self.mapViewController.mapView.settings.myLocationButton = true
-    }
-    
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.first else {
-            return
-        }
-        
-        self.mapViewController.mapView.camera = GMSCameraPosition(target: location.coordinate, zoom: 15, bearing: 0, viewingAngle: 0)
+        guard let userLocation = locations.first else { return }
+
+        delegate?.locationManager(self, locations: [userLocation.coordinate, destinationLocation])
     }
-    
+
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
     }
 }
