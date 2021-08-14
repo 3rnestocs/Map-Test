@@ -5,7 +5,7 @@
 //  Created by Ernesto Jose Contreras Lopez on 8/12/21.
 //
 
-import Foundation
+import UIKit
 import GoogleMaps
 
 protocol MapViewModelType: class {
@@ -34,13 +34,27 @@ class MapViewModel: MapViewModelType {
 
     // MARK: - Location setup
     private func setupLocation() {
-        locationManager.delegate = self
-        locationManager.getCurrentLocation()
+        self.locationManager.delegate = self
+        self.handleAuthorization()
+    }
+
+    private func handleAuthorization() {
+        let status = locationManager.checkStatus()
+        switch status {
+        case .authorized:
+            self.locationManager.getCurrentLocation()
+        case .denied:
+            self.mapViewController.showAlertWith(message: "You must go to settings and authorize the location permissions in order to test the app.", title: "Authorization denied", type: .goToSettings)
+        case .error:
+            self.mapViewController.showAlertWith(message: "There was an error requesting the location authorization.", title: "An error has ocurred", type: .error)
+        default:
+            break
+        }
     }
 
     private func focusUserLocation(userLocation: CLLocationCoordinate2D, mapVC: MapViewController) {
 
-        let camera = GMSCameraPosition(target: userLocation, zoom: 4)
+        let camera = GMSCameraPosition(target: userLocation, zoom: 16)
         let update = GMSCameraUpdate.setCamera(camera)
         mapVC.mapView.moveCamera(update)
     }
@@ -57,10 +71,9 @@ class MapViewModel: MapViewModelType {
             switch result {
             case .success(let routes):
                 self.routes = routes
-                self.delegate?.routeDrawingSuccess()
+                self.delegate?.routeSuccess()
             case .failure(let error):
-                print("Map error:", error)
-                self.delegate?.routeDrawingFailure()
+                self.delegate?.routeFailure(type: error)
             }
         })
     }
@@ -102,7 +115,7 @@ class MapViewModel: MapViewModelType {
                     self.routeLocations.append(path.coordinate(at: 1))
                 }
                 self.polyLine = GMSPolyline.init(path: path)
-                self.polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.5)
+                self.polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
                 self.polyLine.strokeWidth = 5
                 self.polyLine.map = mapVC.mapView
             }
@@ -117,6 +130,9 @@ class MapViewModel: MapViewModelType {
 }
 
 extension MapViewModel: LocationManagerDelegate {
+    func showErrorMessage(message: String) {
+    }
+    
     func locationManager(_ manager: LocationManager, locations: [CLLocationCoordinate2D]) {
         self.locations = locations
         self.updateMap(locations: locations)

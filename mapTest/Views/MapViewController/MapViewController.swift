@@ -10,8 +10,8 @@ import GoogleMaps
 import Alamofire
 
 protocol MapViewControllerDelegate: class {
-    func routeDrawingSuccess()
-    func routeDrawingFailure()
+    func routeSuccess()
+    func routeFailure(type: ErrorCases)
 }
 
 protocol MapViewAlertTextDelegate: class {
@@ -94,14 +94,17 @@ class MapViewController: UIViewController {
     
     // MARK: - Helpers
     private func followRoute() {
-        let camera = GMSCameraPosition(target: viewModel.getLocations()[1], zoom: 4)
+        let camera = GMSCameraPosition(target: viewModel.getLocations()[1], zoom: 16)
         let update = GMSCameraUpdate.setCamera(camera)
         self.mapView.moveCamera(update)
     }
 
     func createMarkerOnUserLocation() {
         let sourceMarker = GMSMarker()
-        sourceMarker.position = self.viewModel.getLocations()[0]
+        let location = self.viewModel.getLocations()
+        if !location.isEmpty {
+            sourceMarker.position = location[0]
+        }
         sourceMarker.icon = markerIcon(tintColor: UIColor(named: "mainBlack")!)
         sourceMarker.map = self.mapView
     }
@@ -128,6 +131,28 @@ class MapViewController: UIViewController {
         self.viewModel.updatePolylineAfterAnimation()
         self.mapView.animate(toLocation: self.viewModel.getLocations()[1])
         self.createAlertInput()
+    }
+    enum AlertType {
+        case goToSettings
+        case error
+    }
+
+    func showAlertWith(message: String, title: String, type: AlertType) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Accept", style: .default, handler: { [weak alert] (_) in
+            alert?.dismiss(animated: true)
+        }))
+        
+        if type == .goToSettings {
+            alert.addAction(UIAlertAction(title: "Go to settings", style: .default, handler: { _ in
+                LocationManager.routeToSettings()
+            }))
+        }
+
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 
     // MARK: - CAShapeLayer
@@ -171,7 +196,7 @@ class MapViewController: UIViewController {
 }
 
 extension MapViewController: MapViewControllerDelegate, GMSMapViewDelegate {
-    func routeDrawingSuccess() {
+    func routeSuccess() {
         UIView.animate(withDuration: 0.05) {
             self.viewModel.getAllRoutes()
         } completion: { _ in
@@ -180,7 +205,12 @@ extension MapViewController: MapViewControllerDelegate, GMSMapViewDelegate {
         }
     }
 
-    func routeDrawingFailure() {
-        print("Nestor failed")
+    func routeFailure(type: ErrorCases) {
+        switch type {
+        case .badJSON:
+            self.showAlertWith(message: "An error has ocurred when the data was retrieved", title: "Request failed", type: .error)
+        case .buildUrl:
+            self.showAlertWith(message: "You must give the location authorization in order to test the app.", title: "Missing authorization", type: .error)
+        }
     }
 }

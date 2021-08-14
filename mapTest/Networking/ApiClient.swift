@@ -8,13 +8,18 @@
 import Alamofire
 import CoreLocation
 
+enum ErrorCases: Error {
+    case buildUrl
+    case badJSON
+}
+
 class ApiClient {
     static let shared = ApiClient()
-    typealias routesCallBack = (Result<[Route], Error>) -> Void
+    typealias routesCallBack = (Result<[Route], ErrorCases>) -> Void
 
     func requestPlaces(locations: [CLLocationCoordinate2D], completion: @escaping routesCallBack) {
         guard let url = buildUrl(locations: locations) else {
-            print("Something wrong happened")
+            completion(.failure(.buildUrl))
             return
         }
 
@@ -28,20 +33,24 @@ class ApiClient {
                 let routes = jsonData.routes
                 completion(.success(routes))
             }
-             catch let error {
-                completion(.failure(error))
+             catch {
+                completion(.failure(.badJSON))
             }
         }
     }
 
     private func buildUrl(locations: [CLLocationCoordinate2D]) -> URL? {
-        let source = "\(locations[0].latitude),\(locations[0].longitude)"
-        let destination = "\(locations[1].latitude),\(locations[1].longitude)"
-        let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(source)&destination=\(destination)&mode=walking&key=AIzaSyAFCmJTHfdwUprZHZ7pB48Lj6HlYJwKTXw"
-        if let url = URL(string: urlString) {
-            return url
-        } else {
-            return nil
+        var finalUrl: URL?
+        if !locations.isEmpty {
+            let source = "\(locations[0].latitude),\(locations[0].longitude)"
+            let destination = "\(locations[1].latitude),\(locations[1].longitude)"
+            let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(source)&destination=\(destination)&mode=walking&key=AIzaSyAFCmJTHfdwUprZHZ7pB48Lj6HlYJwKTXw"
+            if let url = URL(string: urlString) {
+                finalUrl = url
+            } else {
+                finalUrl = nil
+            }
         }
+        return finalUrl
     }
 }

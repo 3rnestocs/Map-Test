@@ -5,6 +5,7 @@
 //  Created by Ernesto Jose Contreras Lopez on 8/12/21.
 //
 
+import UIKit
 import CoreLocation
 
 protocol LocationManagerDelegate: class {
@@ -12,6 +13,13 @@ protocol LocationManagerDelegate: class {
 }
 
 class LocationManager: NSObject {
+
+    enum AuthorizationStatus {
+        case authorized
+        case denied
+        case error
+        case undefined
+    }
 
     // MARK: - Properties
     private var locationManager: CLLocationManager
@@ -29,11 +37,36 @@ class LocationManager: NSObject {
         locationManager.distanceFilter = 150
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
 
         if CLLocationManager.locationServicesEnabled() {
             locationManager.startUpdatingLocation()
         }
+    }
+
+    static func routeToSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+            return
+        }
+
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.open(settingsUrl, completionHandler: nil)
+        }
+    }
+
+    func checkStatus() -> AuthorizationStatus {
+        var finalStatus: AuthorizationStatus = .undefined
+        let status = locationManager.authorizationStatus
+            switch status {
+            case .authorizedAlways, .authorizedWhenInUse:
+                finalStatus = .authorized
+            case .denied, .restricted:
+                finalStatus = .denied
+            case .notDetermined:
+                self.locationManager.requestWhenInUseAuthorization()
+            default:
+                finalStatus = .error
+            }
+        return finalStatus
     }
 }
 
