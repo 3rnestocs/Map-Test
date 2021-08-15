@@ -11,6 +11,7 @@ import GoogleMaps
 protocol MapViewModelType: class {
     func getAllRoutes()
     func updatedLocation() -> CLLocationCoordinate2D?
+    func changeRecordingStatus(shouldRecord: Bool)
 }
 
 class MapViewModel: MapViewModelType {
@@ -21,7 +22,8 @@ class MapViewModel: MapViewModelType {
     private var routes: [Route]?
     private var polyLinesArray = [GMSPolyline]()
     private var nextLocation: CLLocationCoordinate2D?
-    private var recentCoordinates = [CLLocationCoordinate2D]()
+    private var isRecordingRoute = false
+    var recentCoordinates = [CLLocationCoordinate2D]()
     weak var delegate: MapViewControllerDelegate?
     var steps: [Step]!
     var leg: Leg!
@@ -58,17 +60,16 @@ class MapViewModel: MapViewModelType {
         self.recentCoordinates.removeAll()
         if self.locations.count >= 2 {
             self.recentCoordinates = self.locations.suffix(2)
+            ApiClient.shared.requestPlaces(locations: self.recentCoordinates, completion: { result in
+                switch result {
+                case .success(let routes):
+                    self.routes = routes
+                    self.delegate?.routeSuccess()
+                case .failure(let error):
+                    self.delegate?.routeFailure(type: error)
+                }
+            })
         }
-
-        ApiClient.shared.requestPlaces(locations: self.recentCoordinates, completion: { result in
-            switch result {
-            case .success(let routes):
-                self.routes = routes
-                self.delegate?.routeSuccess()
-            case .failure(let error):
-                self.delegate?.routeFailure(type: error)
-            }
-        })
     }
 
     // MARK: - MapViewModelType methods
@@ -82,7 +83,6 @@ class MapViewModel: MapViewModelType {
             let stepPoints = leg.steps
             self.steps = stepPoints
             self.animateRoutes(steps: stepPoints)
-            self.handleRouteSaving()
         }
     }
 
@@ -91,6 +91,10 @@ class MapViewModel: MapViewModelType {
             return nil
         }
         return location
+    }
+
+    func changeRecordingStatus(shouldRecord: Bool) {
+        self.isRecordingRoute = shouldRecord
     }
 
     // MARK: - Helpers
@@ -110,10 +114,11 @@ class MapViewModel: MapViewModelType {
         }
     }
 
-    private func handleRouteSaving() {
-        self.viewController.createMarker(location: self.recentCoordinates.suffix(2)[0], color: UIColor(named: "mainRed"))
-        self.viewController.createMarker(location: self.recentCoordinates.suffix(2)[1], color: UIColor(named: "mainBlack"))
-        self.viewController.createAlertInput()
+    func handleRouteSaving(status: Bool) {
+        if status {
+            self.viewController.createMarker(location: self.recentCoordinates.suffix(2)[1], color: UIColor(named: "mainRed"))
+            self.viewController.createAlertInput()
+        }
     }
 }
 
@@ -123,9 +128,10 @@ extension MapViewModel: LocationManagerDelegate {
     
     func locationManager(_ manager: LocationManager, currentLocation: CLLocationCoordinate2D) {
         self.locations.append(currentLocation)
+        self.nextLocation = locations.last
         self.viewController?.followRoute()
-        if currentLocation != locations.first {
-            self.nextLocation = currentLocation
+        if self.isRecordingRoute {
+            self.fetchRoutes()
         }
     }
 }

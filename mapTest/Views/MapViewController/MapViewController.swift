@@ -26,7 +26,7 @@ class MapViewController: UIViewController {
     }
 
     // MARK: - Properties
-    private let startButton = UIButton(type: .system)
+    let startButton = UIButton(type: .system)
     public var mapView: GMSMapView!
     public var viewModel: MapViewModel!
     private var shapeLayer: CAShapeLayer!
@@ -73,6 +73,10 @@ class MapViewController: UIViewController {
                                         .font: UIFont.systemFont(ofSize: 16, weight: .heavy),
                                         .foregroundColor: UIColor(named: "mainRed")!]),
                                        for: .normal)
+        startButton.setAttributedTitle(NSAttributedString(string: "SAVE", attributes: [
+                                        .font: UIFont.systemFont(ofSize: 16, weight: .heavy),
+                                        .foregroundColor: UIColor(named: "mainRed")!]),
+                                       for: .selected)
         startButton.anchor(top: nil, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 48, left: view.leftAnchor, paddingLeft: 48, right: view.rightAnchor, paddingRight: 48, width: 0, height: 48)
         startButton.backgroundColor = UIColor(named: "mainBlack")
         startButton.addTarget(self, action: #selector(self.didTapStartButton(_:)), for: .touchUpInside)
@@ -81,7 +85,7 @@ class MapViewController: UIViewController {
     // MARK: - Helpers
     func followRoute() {
         if let currentLocation = self.viewModel.updatedLocation() {
-            let camera = GMSCameraPosition(target: currentLocation, zoom: 12)
+            let camera = GMSCameraPosition(target: currentLocation, zoom: 16)
             let update = GMSCameraUpdate.setCamera(camera)
             self.mapView.moveCamera(update)
             self.createCurrentLocationMarker(location: currentLocation, color: .systemBlue)
@@ -91,7 +95,7 @@ class MapViewController: UIViewController {
     func createMarker(location: CLLocationCoordinate2D, color: UIColor?) {
         let marker = GMSMarker()
         marker.position = location
-        marker.icon = self.markerIcon(tintColor: color!, icon: "pin", size: 32)
+        marker.icon = UIImage.createMarkerIcon(tintColor: color!, icon: "pin", size: 32)
         marker.map = self.mapView
     }
 
@@ -100,17 +104,11 @@ class MapViewController: UIViewController {
             self.marker = GMSMarker()
         }
         self.marker.position = location
-        self.marker.icon = self.markerIcon(tintColor: color!, icon: "circle", size: 24)
+        self.marker.icon = UIImage.createMarkerIcon(tintColor: .systemBlue, icon: "circle", size: 24)
         self.marker.map = self.mapView
     }
 
-    private func markerIcon(tintColor: UIColor, icon: String, size: CGFloat) -> UIImage {
-        guard let marker = UIImage(named: icon)?.withTintColor(tintColor)
-                .imageWith(newSize: CGSize(width: size, height: size)) else {
-            return UIImage()
-        }
-        return marker
-    }
+
     
     // MARK: - Alerts
     func showAlertWith(message: String, title: String, type: AlertType) {
@@ -138,7 +136,7 @@ class MapViewController: UIViewController {
             if let textField = alert?.textFields?[0],
                let text = textField.text {
                 let step = self.viewModel.steps.last
-                let routeData = UserRoute(route: [CLLocationCoordinate2D](), name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "")
+                let routeData = UserRoute(route: self.viewModel.recentCoordinates, polyLine: step!.polyline, name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "")
                 self.delegate?.didSubmitRouteName(routeData: routeData)
             }
         }))
@@ -150,13 +148,20 @@ class MapViewController: UIViewController {
 
     // MARK: - Actions
     @objc private func didTapStartButton(_ sender: UIButton) {
-        self.viewModel.fetchRoutes()
+        if !sender.isSelected {
+            self.viewModel.fetchRoutes()
+            self.createMarker(location: self.viewModel.recentCoordinates[0], color: UIColor(named: "mainBlack")!)
+        } else {
+            self.viewModel.handleRouteSaving(status: sender.isSelected)
+        }
+        sender.isSelected = !sender.isSelected
     }
 }
 
 extension MapViewController: MapViewControllerDelegate, GMSMapViewDelegate {
     func routeSuccess() {
         self.viewModel.getAllRoutes()
+        self.viewModel.changeRecordingStatus(shouldRecord: self.startButton.isSelected)
     }
 
     func routeFailure(type: ErrorCases) {

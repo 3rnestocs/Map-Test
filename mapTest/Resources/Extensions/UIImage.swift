@@ -15,4 +15,12 @@ extension UIImage {
             
         return image.withRenderingMode(renderingMode)
     }
+
+    static func createMarkerIcon(tintColor: UIColor, icon: String, size: CGFloat) -> UIImage {
+        guard let marker = UIImage(named: icon)?.withTintColor(tintColor)
+                .imageWith(newSize: CGSize(width: size, height: size)) else {
+            return UIImage()
+        }
+        return marker
+    }
 }

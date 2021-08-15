@@ -9,12 +9,8 @@ import UIKit
 
 class ListViewController: UIViewController {
 
-    private let tableView = UITableView()
-    var routeDatasource: [UserRoute]? {
-        didSet {
-            self.tableView.reloadData()
-        }
-    }
+    let tableView = UITableView()
+    var routeDatasource: [UserRoute]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,5 +60,13 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
             cell.configureCell(kilometers: userRoute.distance, route: userRoute.name)
         }
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let userRoute = routeDatasource?[indexPath.row] {
+            let detailVC = DetailViewController()
+            detailVC.route = userRoute
+            self.navigationController?.pushViewController(detailVC, animated: true)
+        }
     }
 }

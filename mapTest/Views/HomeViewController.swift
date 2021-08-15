@@ -68,5 +68,6 @@ extension HomeViewController: MapViewAlertTextDelegate {
         } else {
             self.listViewController?.routeDatasource?.append(routeData)
         }
+        self.listViewController?.tableView.reloadData()
     }
 }
