@@ -26,7 +26,7 @@ class MapViewController: UIViewController {
     public var viewModel: MapViewModel!
     private var shapeLayer: CAShapeLayer!
     weak var delegate: MapViewAlertTextDelegate?
-
+    var shouldStopTracking = false
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,20 +71,14 @@ class MapViewController: UIViewController {
         startButton.addTarget(self, action: #selector(self.didTapStartButton(_:)), for: .touchUpInside)
     }
 
-    func setupShape() {
-        self.shapeLayer = self.layer()
-        self.animatePath(shapeLayer)
-        self.mapView.layer.addSublayer(shapeLayer)
-    }
-
     private func createAlertInput() {
-        let alert = UIAlertController(title: "Where did you go?", message: "Type your route name", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Record your route", message: "Type in your route name to check it out later.", preferredStyle: .alert)
         alert.addTextField { _ in }
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
             if let textField = alert?.textFields?[0],
                let text = textField.text {
                 let step = self.viewModel.steps.last
-                let routeData = UserRoute(name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "", route: self.viewModel.leg.startAddress)
+                let routeData = UserRoute(route: [CLLocationCoordinate2D](), name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "")
                 self.delegate?.didSubmitRouteName(routeData: routeData)
             }
         }))
@@ -93,27 +87,22 @@ class MapViewController: UIViewController {
     }
     
     // MARK: - Helpers
-    private func followRoute() {
-        let camera = GMSCameraPosition(target: viewModel.getLocations()[1], zoom: 16)
-        let update = GMSCameraUpdate.setCamera(camera)
-        self.mapView.moveCamera(update)
-    }
-
-    func createMarkerOnUserLocation() {
-        let sourceMarker = GMSMarker()
-        let location = self.viewModel.getLocations()
-        if !location.isEmpty {
-            sourceMarker.position = location[0]
+    func followRoute() {
+        if let currentLocation = self.viewModel.updatedLocation(),
+           shouldStopTracking == false {
+            let camera = GMSCameraPosition(target: currentLocation, zoom: 12)
+            let update = GMSCameraUpdate.setCamera(camera)
+            self.mapView.moveCamera(update)
+//            self.mapView.clear()
+            self.createMarker(location: currentLocation, color: UIColor(named: "mainRed"))
         }
-        sourceMarker.icon = markerIcon(tintColor: UIColor(named: "mainBlack")!)
-        sourceMarker.map = self.mapView
     }
 
-    private func setupDestinationMarker() {
-        let destinationMarker = GMSMarker()
-        destinationMarker.position = self.viewModel.getLocations()[1]
-        destinationMarker.icon = markerIcon(tintColor: UIColor(named: "mainRed")!)
-        destinationMarker.map = self.mapView
+    private func createMarker(location: CLLocationCoordinate2D, color: UIColor?) {
+        let marker = GMSMarker()
+        marker.position = location
+        marker.icon = markerIcon(tintColor: color!)
+        marker.map = self.mapView
     }
 
     private func markerIcon(tintColor: UIColor) -> UIImage {
@@ -123,15 +112,7 @@ class MapViewController: UIViewController {
         }
         return marker
     }
-
-    func handleShapeAnimationEnd() {
-        self.shapeLayer.removeFromSuperlayer()
-        self.shapeLayer.removeAllAnimations()
-        self.setupDestinationMarker()
-        self.viewModel.updatePolylineAfterAnimation()
-        self.mapView.animate(toLocation: self.viewModel.getLocations()[1])
-        self.createAlertInput()
-    }
+    
     enum AlertType {
         case goToSettings
         case error
@@ -155,40 +136,6 @@ class MapViewController: UIViewController {
         }
     }
 
-    // MARK: - CAShapeLayer
-    func layer() -> CAShapeLayer {
-        let breizerPath = UIBezierPath()
-        let firstCoordinate = self.viewModel.routeLocations[0]
-        breizerPath.move(to: self.mapView.projection.point(for: firstCoordinate))
-        for i in self.viewModel.routeLocations {
-            let coordinate: CLLocationCoordinate2D = i
-            breizerPath.addLine(to: self.mapView.projection.point(for: coordinate))
-        }
-
-        let shapeLayer = CAShapeLayer()
-        shapeLayer.path = breizerPath.cgPath
-        shapeLayer.strokeColor = UIColor(named: "mainRed")!.cgColor
-        shapeLayer.lineWidth = 5.0
-        shapeLayer.fillColor = UIColor.clear.cgColor
-        return shapeLayer
-    }
-
-    func animatePath(_ layer: CAShapeLayer) {
-        CATransaction.begin()
-        let pathAnimation = CABasicAnimation(keyPath: "strokeEnd")
-        pathAnimation.duration = 5
-        pathAnimation.timingFunction = CAMediaTimingFunction(name: .linear)
-        pathAnimation.fromValue = Int(0.0)
-        pathAnimation.toValue = Int(1.0)
-        
-        CATransaction.setCompletionBlock {
-            self.handleShapeAnimationEnd()
-        }
-
-        layer.add(pathAnimation, forKey: "strokeEnd")
-        CATransaction.commit()
-    }
-
     // MARK: - Actions
     @objc private func didTapStartButton(_ sender: UIButton) {
         self.viewModel.fetchRoutes()
@@ -197,12 +144,7 @@ class MapViewController: UIViewController {
 
 extension MapViewController: MapViewControllerDelegate, GMSMapViewDelegate {
     func routeSuccess() {
-        UIView.animate(withDuration: 0.05) {
-            self.viewModel.getAllRoutes()
-        } completion: { _ in
-            self.viewModel.animateRoutes()
-            self.setupShape()
-        }
+        self.viewModel.getAllRoutes()
     }
 
     func routeFailure(type: ErrorCases) {

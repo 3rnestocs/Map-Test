@@ -33,24 +33,21 @@ class ApiClient {
                 let routes = jsonData.routes
                 completion(.success(routes))
             }
-             catch {
+             catch let error {
+                print("DEBUG", error)
                 completion(.failure(.badJSON))
             }
         }
     }
 
     private func buildUrl(locations: [CLLocationCoordinate2D]) -> URL? {
-        var finalUrl: URL?
-        if !locations.isEmpty {
-            let source = "\(locations[0].latitude),\(locations[0].longitude)"
-            let destination = "\(locations[1].latitude),\(locations[1].longitude)"
-            let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(source)&destination=\(destination)&mode=walking&key=AIzaSyAFCmJTHfdwUprZHZ7pB48Lj6HlYJwKTXw"
-            if let url = URL(string: urlString) {
-                finalUrl = url
-            } else {
-                finalUrl = nil
-            }
+        let source = "\(locations[0].latitude),\(locations[0].longitude)"
+        let destination = "\(locations[1].latitude),\(locations[1].longitude)"
+        let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(source)&destination=\(destination)&mode=walking&key=AIzaSyAFCmJTHfdwUprZHZ7pB48Lj6HlYJwKTXw"
+        if let url = URL(string: urlString) {
+            return url
+        } else {
+            return nil
         }
-        return finalUrl
     }
 }

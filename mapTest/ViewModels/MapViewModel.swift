@@ -9,9 +9,10 @@ import UIKit
 import GoogleMaps
 
 protocol MapViewModelType: class {
-    func getLocations() -> [CLLocationCoordinate2D]
+    func getLocations() -> [CLLocationCoordinate2D]?
     func getAllRoutes()
     func updatePolylineAfterAnimation()
+    func updatedLocation() -> CLLocationCoordinate2D?
 }
 
 class MapViewModel: MapViewModelType {
@@ -19,12 +20,13 @@ class MapViewModel: MapViewModelType {
     weak var delegate: MapViewControllerDelegate?
     private var mapViewController: MapViewController!
     private let locationManager = LocationManager()
-    private var locations: [CLLocationCoordinate2D]?
+    private var locations = [CLLocationCoordinate2D]()
     private var routes: [Route]?
     var steps: [Step]!
     var leg: Leg!
     private var polyLine: GMSPolyline!
-    var routeLocations = [CLLocationCoordinate2D]()
+    private var nextLocation: CLLocationCoordinate2D?
+    private var recentCoordinates = [CLLocationCoordinate2D]()
 
     // MARK: - Init
     init(viewController: MapViewController) {
@@ -36,6 +38,7 @@ class MapViewModel: MapViewModelType {
     private func setupLocation() {
         self.locationManager.delegate = self
         self.handleAuthorization()
+        self.locations.removeAll()
     }
 
     private func handleAuthorization() {
@@ -67,7 +70,13 @@ class MapViewModel: MapViewModelType {
 
     // MARK: - Routes fetching
     func fetchRoutes() {
-        ApiClient.shared.requestPlaces(locations: getLocations(), completion: { result in
+        self.recentCoordinates.removeAll()
+        for (index, _) in self.locations.enumerated() {
+            if index > 2 {
+                self.recentCoordinates = self.locations.suffix(2)
+            }
+        }
+        ApiClient.shared.requestPlaces(locations: self.recentCoordinates, completion: { result in
             switch result {
             case .success(let routes):
                 self.routes = routes
@@ -79,20 +88,24 @@ class MapViewModel: MapViewModelType {
     }
 
     // MARK: - MapViewModelType methods
-    func getLocations() -> [CLLocationCoordinate2D] {
-        guard let locations = self.locations else { return
-            [CLLocationCoordinate2D]()
+    func getLocations() -> [CLLocationCoordinate2D]? {
+        if !self.locations.isEmpty {
+            return locations
+        } else {
+            return nil
         }
-        return locations
     }
 
     func getAllRoutes() {
         if let routes = self.routes,
            !routes.isEmpty {
-            let leg = routes.first?.legs.first
+            guard let leg = routes.first?.legs.first else {
+                return
+            }
             self.leg = leg
-            guard let stepPoints = leg?.steps else { return }
+            let stepPoints = leg.steps
             self.steps = stepPoints
+            self.animateRoutes(steps: stepPoints)
         }
     }
 
@@ -102,18 +115,19 @@ class MapViewModel: MapViewModelType {
         self.polyLine.strokeColor = .red
     }
 
+    func updatedLocation() -> CLLocationCoordinate2D? {
+        guard let location = self.nextLocation else {
+            return nil
+        }
+        return location
+    }
+
     // MARK: - Helpers
-    func animateRoutes() {
+    func animateRoutes(steps: [Step]) {
         if let mapVC = self.mapViewController {
-            self.cleanMapShapes(mapVC: mapVC)
-            for (index, step) in steps.enumerated() {
+            for (_, step) in steps.enumerated() {
                 let point = step.polyline.points
                 let path = GMSPath.init(fromEncodedPath: point)!
-                let pathLocation = path.coordinate(at: UInt(index))
-                
-                if pathLocation.latitude != -180.0, pathLocation.longitude != -180.0 {
-                    self.routeLocations.append(path.coordinate(at: 1))
-                }
                 self.polyLine = GMSPolyline.init(path: path)
                 self.polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
                 self.polyLine.strokeWidth = 5
@@ -121,20 +135,32 @@ class MapViewModel: MapViewModelType {
             }
         }
     }
-
-    private func cleanMapShapes(mapVC: MapViewController) {
-        self.routeLocations.removeAll()
-        mapVC.mapView.clear()
-        mapVC.createMarkerOnUserLocation()
-    }
 }
 
 extension MapViewModel: LocationManagerDelegate {
     func showErrorMessage(message: String) {
     }
     
-    func locationManager(_ manager: LocationManager, locations: [CLLocationCoordinate2D]) {
-        self.locations = locations
-        self.updateMap(locations: locations)
+    func locationManager(_ manager: LocationManager, currentLocation: CLLocationCoordinate2D) {
+        if !self.locations.contains(currentLocation) {
+            self.locations.append(currentLocation)
+            self.mapViewController?.followRoute()
+        } else {
+            self.mapViewController.shouldStopTracking = true
+        }
+        if currentLocation != locations.first {
+            self.nextLocation = currentLocation
+        }
+    }
+}
+
+extension CLLocationCoordinate2D: Equatable {
+    public static func ==(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        if lhs.latitude == rhs.latitude &&
+            lhs.longitude == rhs.longitude {
+            return true
+        } else {
+            return false
+        }
     }
 }
