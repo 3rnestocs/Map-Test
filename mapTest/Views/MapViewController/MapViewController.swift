@@ -19,7 +19,12 @@ protocol MapViewAlertTextDelegate: class {
 }
 
 class MapViewController: UIViewController {
-    
+
+    enum AlertType {
+        case goToSettings
+        case error
+    }
+
     // MARK: - Properties
     private let startButton = UIButton(type: .system)
     public var mapView: GMSMapView!
@@ -27,6 +32,8 @@ class MapViewController: UIViewController {
     private var shapeLayer: CAShapeLayer!
     weak var delegate: MapViewAlertTextDelegate?
     var shouldStopTracking = false
+    var marker: GMSMarker!
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,54 +77,42 @@ class MapViewController: UIViewController {
         startButton.backgroundColor = UIColor(named: "mainBlack")
         startButton.addTarget(self, action: #selector(self.didTapStartButton(_:)), for: .touchUpInside)
     }
-
-    private func createAlertInput() {
-        let alert = UIAlertController(title: "Record your route", message: "Type in your route name to check it out later.", preferredStyle: .alert)
-        alert.addTextField { _ in }
-        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] (_) in
-            if let textField = alert?.textFields?[0],
-               let text = textField.text {
-                let step = self.viewModel.steps.last
-                let routeData = UserRoute(route: [CLLocationCoordinate2D](), name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "")
-                self.delegate?.didSubmitRouteName(routeData: routeData)
-            }
-        }))
-
-        self.present(alert, animated: true, completion: nil)
-    }
     
     // MARK: - Helpers
     func followRoute() {
-        if let currentLocation = self.viewModel.updatedLocation(),
-           shouldStopTracking == false {
+        if let currentLocation = self.viewModel.updatedLocation() {
             let camera = GMSCameraPosition(target: currentLocation, zoom: 12)
             let update = GMSCameraUpdate.setCamera(camera)
             self.mapView.moveCamera(update)
-//            self.mapView.clear()
-            self.createMarker(location: currentLocation, color: UIColor(named: "mainRed"))
+            self.createCurrentLocationMarker(location: currentLocation, color: .systemBlue)
         }
     }
 
-    private func createMarker(location: CLLocationCoordinate2D, color: UIColor?) {
+    func createMarker(location: CLLocationCoordinate2D, color: UIColor?) {
         let marker = GMSMarker()
         marker.position = location
-        marker.icon = markerIcon(tintColor: color!)
+        marker.icon = self.markerIcon(tintColor: color!, icon: "pin", size: 32)
         marker.map = self.mapView
     }
 
-    private func markerIcon(tintColor: UIColor) -> UIImage {
-        guard let marker = UIImage(named: "pin")?.withTintColor(tintColor)
-                .imageWith(newSize: CGSize(width: 32, height: 32)) else {
+    private func createCurrentLocationMarker(location: CLLocationCoordinate2D, color: UIColor?) {
+        if self.marker == nil {
+            self.marker = GMSMarker()
+        }
+        self.marker.position = location
+        self.marker.icon = self.markerIcon(tintColor: color!, icon: "circle", size: 24)
+        self.marker.map = self.mapView
+    }
+
+    private func markerIcon(tintColor: UIColor, icon: String, size: CGFloat) -> UIImage {
+        guard let marker = UIImage(named: icon)?.withTintColor(tintColor)
+                .imageWith(newSize: CGSize(width: size, height: size)) else {
             return UIImage()
         }
         return marker
     }
     
-    enum AlertType {
-        case goToSettings
-        case error
-    }
-
+    // MARK: - Alerts
     func showAlertWith(message: String, title: String, type: AlertType) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
@@ -130,6 +125,23 @@ class MapViewController: UIViewController {
                 LocationManager.routeToSettings()
             }))
         }
+
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+
+    func createAlertInput() {
+        let alert = UIAlertController(title: "Record your route", message: "Type in your route name to check it out later.", preferredStyle: .alert)
+        alert.addTextField { _ in }
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] _ in
+            if let textField = alert?.textFields?[0],
+               let text = textField.text {
+                let step = self.viewModel.steps.last
+                let routeData = UserRoute(route: [CLLocationCoordinate2D](), name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "")
+                self.delegate?.didSubmitRouteName(routeData: routeData)
+            }
+        }))
 
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)

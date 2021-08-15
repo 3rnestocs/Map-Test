@@ -26,6 +26,7 @@
 		8D7A65E726C5A9C600461D2D /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65E626C5A9C600461D2D /* MapViewModel.swift */; };
 		8D7A65EA26C5BCA000461D2D /* RouteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65E926C5BCA000461D2D /* RouteModel.swift */; };
 		8D7A65EF26C5C39300461D2D /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A65EE26C5C39300461D2D /* ApiClient.swift */; };
+		8DFAA9F226C964D800A3867E /* CLLocationCoordinate2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFAA9F126C964D800A3867E /* CLLocationCoordinate2D.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		8D7A65E626C5A9C600461D2D /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		8D7A65E926C5BCA000461D2D /* RouteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteModel.swift; sourceTree = "<group>"; };
 		8D7A65EE26C5C39300461D2D /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
+		8DFAA9F126C964D800A3867E /* CLLocationCoordinate2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationCoordinate2D.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +162,7 @@
 				8D674B5726C4093100116CBD /* UIView.swift */,
 				8D674B8426C420CE00116CBD /* UIImage.swift */,
 				8D674B8726C420F300116CBD /* UITabBar.swift */,
+				8DFAA9F126C964D800A3867E /* CLLocationCoordinate2D.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				8D674B5826C4093100116CBD /* UIView.swift in Sources */,
 				8D674B8526C420CE00116CBD /* UIImage.swift in Sources */,
 				8D674B6C26C40A9500116CBD /* ListTableViewCell.swift in Sources */,
+				8DFAA9F226C964D800A3867E /* CLLocationCoordinate2D.swift in Sources */,
 				8D674B7226C40AD700116CBD /* DetailViewController.swift in Sources */,
 				8D7A65E726C5A9C600461D2D /* MapViewModel.swift in Sources */,
 			);

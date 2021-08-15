@@ -9,28 +9,26 @@ import UIKit
 import GoogleMaps
 
 protocol MapViewModelType: class {
-    func getLocations() -> [CLLocationCoordinate2D]?
     func getAllRoutes()
-    func updatePolylineAfterAnimation()
     func updatedLocation() -> CLLocationCoordinate2D?
 }
 
 class MapViewModel: MapViewModelType {
     // MARK: - Properties
-    weak var delegate: MapViewControllerDelegate?
-    private var mapViewController: MapViewController!
     private let locationManager = LocationManager()
+    private var viewController: MapViewController!
     private var locations = [CLLocationCoordinate2D]()
     private var routes: [Route]?
-    var steps: [Step]!
-    var leg: Leg!
-    private var polyLine: GMSPolyline!
+    private var polyLinesArray = [GMSPolyline]()
     private var nextLocation: CLLocationCoordinate2D?
     private var recentCoordinates = [CLLocationCoordinate2D]()
+    weak var delegate: MapViewControllerDelegate?
+    var steps: [Step]!
+    var leg: Leg!
 
     // MARK: - Init
     init(viewController: MapViewController) {
-        self.mapViewController = viewController
+        self.viewController = viewController
         self.setupLocation()
     }
 
@@ -47,35 +45,21 @@ class MapViewModel: MapViewModelType {
         case .authorized:
             self.locationManager.getCurrentLocation()
         case .denied:
-            self.mapViewController.showAlertWith(message: "You must go to settings and authorize the location permissions in order to test the app.", title: "Authorization denied", type: .goToSettings)
+            self.viewController.showAlertWith(message: "You must go to settings and authorize the location permissions in order to test the app.", title: "Authorization denied", type: .goToSettings)
         case .error:
-            self.mapViewController.showAlertWith(message: "There was an error requesting the location authorization.", title: "An error has ocurred", type: .error)
+            self.viewController.showAlertWith(message: "There was an error requesting the location authorization.", title: "An error has ocurred", type: .error)
         default:
             break
-        }
-    }
-
-    private func focusUserLocation(userLocation: CLLocationCoordinate2D, mapVC: MapViewController) {
-
-        let camera = GMSCameraPosition(target: userLocation, zoom: 16)
-        let update = GMSCameraUpdate.setCamera(camera)
-        mapVC.mapView.moveCamera(update)
-    }
-
-    private func updateMap(locations: [CLLocationCoordinate2D]) {
-        if let mapVC = self.mapViewController {
-            self.focusUserLocation(userLocation: locations[0], mapVC: mapVC)
         }
     }
 
     // MARK: - Routes fetching
     func fetchRoutes() {
         self.recentCoordinates.removeAll()
-        for (index, _) in self.locations.enumerated() {
-            if index > 2 {
-                self.recentCoordinates = self.locations.suffix(2)
-            }
+        if self.locations.count >= 2 {
+            self.recentCoordinates = self.locations.suffix(2)
         }
+
         ApiClient.shared.requestPlaces(locations: self.recentCoordinates, completion: { result in
             switch result {
             case .success(let routes):
@@ -88,14 +72,6 @@ class MapViewModel: MapViewModelType {
     }
 
     // MARK: - MapViewModelType methods
-    func getLocations() -> [CLLocationCoordinate2D]? {
-        if !self.locations.isEmpty {
-            return locations
-        } else {
-            return nil
-        }
-    }
-
     func getAllRoutes() {
         if let routes = self.routes,
            !routes.isEmpty {
@@ -106,13 +82,8 @@ class MapViewModel: MapViewModelType {
             let stepPoints = leg.steps
             self.steps = stepPoints
             self.animateRoutes(steps: stepPoints)
+            self.handleRouteSaving()
         }
-    }
-
-    func updatePolylineAfterAnimation() {
-        // This has a bug, it doesn't update the polyline's color when the animation finishes
-        self.polyLine.spans = [GMSStyleSpan(color: UIColor(named: "mainRed")!)]
-        self.polyLine.strokeColor = .red
     }
 
     func updatedLocation() -> CLLocationCoordinate2D? {
@@ -124,16 +95,25 @@ class MapViewModel: MapViewModelType {
 
     // MARK: - Helpers
     func animateRoutes(steps: [Step]) {
-        if let mapVC = self.mapViewController {
+        if let mapVC = self.viewController {
             for (_, step) in steps.enumerated() {
                 let point = step.polyline.points
                 let path = GMSPath.init(fromEncodedPath: point)!
-                self.polyLine = GMSPolyline.init(path: path)
-                self.polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
-                self.polyLine.strokeWidth = 5
-                self.polyLine.map = mapVC.mapView
+                let polyLine = GMSPolyline.init(path: path)
+                if !polyLinesArray.contains(polyLine) {
+                    polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
+                    polyLine.strokeWidth = 5
+                    polyLine.map = mapVC.mapView
+                    polyLinesArray.append(polyLine)
+                }
             }
         }
+    }
+
+    private func handleRouteSaving() {
+        self.viewController.createMarker(location: self.recentCoordinates.suffix(2)[0], color: UIColor(named: "mainRed"))
+        self.viewController.createMarker(location: self.recentCoordinates.suffix(2)[1], color: UIColor(named: "mainBlack"))
+        self.viewController.createAlertInput()
     }
 }
 
@@ -142,25 +122,10 @@ extension MapViewModel: LocationManagerDelegate {
     }
     
     func locationManager(_ manager: LocationManager, currentLocation: CLLocationCoordinate2D) {
-        if !self.locations.contains(currentLocation) {
-            self.locations.append(currentLocation)
-            self.mapViewController?.followRoute()
-        } else {
-            self.mapViewController.shouldStopTracking = true
-        }
+        self.locations.append(currentLocation)
+        self.viewController?.followRoute()
         if currentLocation != locations.first {
             self.nextLocation = currentLocation
-        }
-    }
-}
-
-extension CLLocationCoordinate2D: Equatable {
-    public static func ==(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-        if lhs.latitude == rhs.latitude &&
-            lhs.longitude == rhs.longitude {
-            return true
-        } else {
-            return false
         }
     }
 }
