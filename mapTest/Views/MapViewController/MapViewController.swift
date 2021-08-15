@@ -26,7 +26,7 @@ class MapViewController: UIViewController {
     }
 
     // MARK: - Properties
-    let startButton = UIButton(type: .system)
+    let startButton = UIButton(type: .custom)
     public var mapView: GMSMapView!
     public var viewModel: MapViewModel!
     private var shapeLayer: CAShapeLayer!
@@ -62,9 +62,10 @@ class MapViewController: UIViewController {
     }
     
     private func setupMap() {
-        self.mapView = GMSMapView(frame: self.view.bounds)
-        self.mapView.delegate = self
+        self.mapView = GMSMapView()
         self.view.addSubview(mapView)
+        self.mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0)
+        self.mapView.delegate = self
     }
 
     private func setupButton() {
@@ -77,7 +78,7 @@ class MapViewController: UIViewController {
                                         .font: UIFont.systemFont(ofSize: 16, weight: .heavy),
                                         .foregroundColor: UIColor(named: "mainRed")!]),
                                        for: .selected)
-        startButton.anchor(top: nil, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 48, left: view.leftAnchor, paddingLeft: 48, right: view.rightAnchor, paddingRight: 48, width: 0, height: 48)
+        startButton.anchor(top: nil, paddingTop: 0, bottom: view.bottomAnchor, paddingBottom: 24, left: view.leftAnchor, paddingLeft: 48, right: view.rightAnchor, paddingRight: 48, width: 0, height: 48)
         startButton.backgroundColor = UIColor(named: "mainBlack")
         startButton.addTarget(self, action: #selector(self.didTapStartButton(_:)), for: .touchUpInside)
     }
@@ -88,7 +89,7 @@ class MapViewController: UIViewController {
             let camera = GMSCameraPosition(target: currentLocation, zoom: 16)
             let update = GMSCameraUpdate.setCamera(camera)
             self.mapView.moveCamera(update)
-            self.createCurrentLocationMarker(location: currentLocation, color: .systemBlue)
+            self.updateUserMarker(location: currentLocation, color: .systemBlue)
         }
     }
 
@@ -99,7 +100,7 @@ class MapViewController: UIViewController {
         marker.map = self.mapView
     }
 
-    private func createCurrentLocationMarker(location: CLLocationCoordinate2D, color: UIColor?) {
+    private func updateUserMarker(location: CLLocationCoordinate2D, color: UIColor?) {
         if self.marker == nil {
             self.marker = GMSMarker()
         }

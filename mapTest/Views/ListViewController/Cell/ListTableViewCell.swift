@@ -24,7 +24,7 @@ class ListTableViewCell: UITableViewCell {
     }
 
     private func setupUI() {
-        self.backgroundColor = UIColor(named: "background")
+        self.backgroundColor = UIColor(named: "mainBlack")
         self.setupLabels()
     }
 
@@ -34,6 +34,8 @@ class ListTableViewCell: UITableViewCell {
 
         self.kmLabel.anchor(top: topAnchor, paddingTop: 0, bottom: routeLabel.topAnchor, paddingBottom: 12, left: leftAnchor, paddingLeft: 24, right: nil, paddingRight: 0, width: 0, height: 0)
         self.kmLabel.font = UIFont.systemFont(ofSize: 16)
+        self.kmLabel.textColor = UIColor(named: "background")
+        self.routeLabel.textColor = UIColor(named: "background")
         self.routeLabel.anchor(top: nil, paddingTop: 0, bottom: nil, paddingBottom: 0, left: kmLabel.leftAnchor, paddingLeft: 0, right: nil, paddingRight: 0, width: 0, height: 0)
         self.routeLabel.font = UIFont.systemFont(ofSize: 16)
         self.setupSeparatorView()
@@ -41,7 +43,7 @@ class ListTableViewCell: UITableViewCell {
 
     func setupSeparatorView() {
         self.addSubview(separatorView)
-        self.separatorView.backgroundColor = UIColor(named: "mainBlack")
+        self.separatorView.backgroundColor = UIColor(named: "background")
         separatorView.anchor(top: routeLabel.bottomAnchor, paddingTop: 16, bottom: bottomAnchor, paddingBottom: 16, left: leftAnchor, paddingLeft: 20, right: rightAnchor, paddingRight: 20, width: 0, height: 1)
     }
 

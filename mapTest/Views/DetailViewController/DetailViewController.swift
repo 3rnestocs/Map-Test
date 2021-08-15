@@ -23,13 +23,19 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.view.backgroundColor = .orange
+        self.view.backgroundColor = UIColor(named: "mainBlack")
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         deleteButton.layer.cornerRadius = deleteButton.frame.height / 2
         shareButton.layer.cornerRadius = shareButton.frame.height / 2
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.title = "Route details"
+        self.navigationController?.navigationBar.tintColor = UIColor(named: "mainRed")
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -86,12 +92,12 @@ class DetailViewController: UIViewController {
                                         for: .normal)
         shareButton.setAttributedTitle(NSAttributedString(string: "Share", attributes: [
                                         .font: UIFont.systemFont(ofSize: 16, weight: .heavy),
-                                        .foregroundColor: UIColor(named: "mainWhite")!]),
+                                        .foregroundColor: UIColor(named: "mainBlack")!]),
                                        for: .normal)
         deleteButton.anchor(top: nil, paddingTop: 0, bottom: shareButton.bottomAnchor, paddingBottom: 0, left: nil, paddingLeft: 0, right: view.rightAnchor, paddingRight: 20, width: 0, height: 48)
         shareButton.anchor(top: nil, paddingTop: 0, bottom: view.safeAreaLayoutGuide.bottomAnchor, paddingBottom: 20, left: view.leftAnchor, paddingLeft: 20, right: deleteButton.leftAnchor, paddingRight: 16, width: 84, height: 48)
         deleteButton.backgroundColor = UIColor(named: "mainRed")
-        shareButton.backgroundColor = UIColor(named: "mainBlack")
+        shareButton.backgroundColor = UIColor(named: "background")
         deleteButton.addTarget(self, action: #selector(deleteButtonTouched(_:)), for: .touchUpInside)
         shareButton.addTarget(self, action: #selector(shareButtonTouched(_:)), for: .touchUpInside)
     }

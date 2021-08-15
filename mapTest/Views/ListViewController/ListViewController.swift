@@ -23,16 +23,17 @@ class ListViewController: UIViewController {
     
     private func setupUI() {
         self.setupTableView()
+        self.view.backgroundColor = UIColor(named: "mainBlack")
     }
     
     private func setupTableView() {
         self.tableView.dataSource = self
         self.tableView.delegate = self
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(named: "background")
+        tableView.backgroundColor = UIColor(named: "mainBlack")
         self.tableView.register(ListTableViewCell.self, forCellReuseIdentifier: ListTableViewCell.identifier)
         self.view.addSubview(tableView)
-        self.tableView.pinToSafeAreaEdges(ofView: view)
+        self.tableView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 24, bottom: view.bottomAnchor, paddingBottom: 16, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 0)
     }
 }
 

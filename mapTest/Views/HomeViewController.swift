@@ -31,7 +31,11 @@ class HomeViewController: UITabBarController {
         self.navigationController?.navigationBar.setBackgroundImage(img, for: .default)
         self.navigationController?.navigationBar.shadowImage = img
         self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = .clear
+        self.navigationController?.view.backgroundColor = UIColor(named: "mainBlack")
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: UIColor(named: "mainRed")!,
+            .font: UIFont.systemFont(ofSize: 18, weight: .bold)
+        ]
     }
 
     private func setupTabBar() {
@@ -69,5 +73,15 @@ extension HomeViewController: MapViewAlertTextDelegate {
             self.listViewController?.routeDatasource?.append(routeData)
         }
         self.listViewController?.tableView.reloadData()
+    }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        if let vc = self.viewControllers?.first {
+            if vc.tabBarItem == item {
+                self.title = ""
+            } else {
+                self.title = "Saved routes"
+            }
+        }
     }
 }
