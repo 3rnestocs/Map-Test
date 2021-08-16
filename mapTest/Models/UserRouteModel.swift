@@ -7,7 +7,15 @@
 
 import GoogleMaps
 
-struct UserRoute: Codable {
+struct UserRoute: Equatable, Codable {
+    static func == (lhs: UserRoute, rhs: UserRoute) -> Bool {
+        if lhs.id == rhs.id {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     var id: String = UUID().uuidString
     var route: [CLLocationCoordinate2D]
     var polyLine: Polyline

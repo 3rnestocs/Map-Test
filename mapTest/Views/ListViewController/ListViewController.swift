@@ -67,7 +67,15 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let userRoute = self.viewModel.getRoutes()[indexPath.row]
         let detailVC = DetailViewController()
-        detailVC.route = userRoute
+        detailVC.viewModel = DetailViewModel(viewController: detailVC)
+        detailVC.viewModel.detailedRoute = userRoute
+        detailVC.delegate = self
         self.navigationController?.pushViewController(detailVC, animated: true)
+    }
+}
+
+extension ListViewController: DetailViewControllerDelegate {
+    func routeDeleted() {
+        self.tableView.reloadData()
     }
 }
