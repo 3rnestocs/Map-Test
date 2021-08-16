@@ -28,12 +28,20 @@ class DetailViewModel: DetailViewModelType {
                 routes.remove(at: index)
             }
         }
-        saveSafely(routes: routes)
+        if routes.count == 0 {
+            self.clearLocalRoutes()
+        } else {
+            saveSafely(routes: routes)
+        }
     }
     
     private func saveSafely(routes: [UserRoute]?) {
         guard let newData = try? JSONEncoder().encode(routes) else { return }
         UserDefaults.standard.set(newData, forKey: "userRoutes")
+    }
+    
+    private func clearLocalRoutes() {
+        UserDefaults.standard.removeObject(forKey: "userRoutes")
     }
     
     func deleteRoute() {

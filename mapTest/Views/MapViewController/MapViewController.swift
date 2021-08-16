@@ -43,7 +43,11 @@ class MapViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         startButton.layer.cornerRadius = startButton.frame.height / 2
-        self.viewModel.drawSavedPolylines()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.mapView.clear()
     }
     
     // MARK: - Setup
@@ -134,12 +138,15 @@ class MapViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] _ in
             if let textField = alert?.textFields?[0],
                let text = textField.text {
-                guard let step = self.viewModel.steps?.last else { return }
+                guard let step = self.viewModel.steps?.last else {
+                    return
+                }
                 let routeData = UserRoute(route: self.viewModel.recentCoordinates,
-                                          polyLine: step.polyline,
+                                          polyLines: self.viewModel.polyLinesArray,
                                           name: text,
                                           distance: step.distance.value,
                                           duration: step.duration.text)
+                self.viewModel.polyLinesArray.removeAll()
                 self.delegate?.didSubmitRouteName(routeData: routeData)
             }
         }))
@@ -153,11 +160,12 @@ class MapViewController: UIViewController {
     @objc private func didTapStartButton(_ sender: UIButton) {
         if !sender.isSelected {
             self.viewModel.fetchRoutes()
-            self.createMarker(location: self.viewModel.recentCoordinates[0], color: UIColor(named: "mainBlack")!)
+            self.createMarker(location: self.viewModel.currentLocation, color: UIColor(named: "mainBlack")!)
         } else {
             self.viewModel.handleRouteSaving(status: sender.isSelected)
         }
         sender.isSelected = !sender.isSelected
+        self.viewModel.changeRecordingStatus(shouldRecord: self.startButton.isSelected)
     }
 }
 
@@ -165,7 +173,6 @@ class MapViewController: UIViewController {
 extension MapViewController: MapViewControllerDelegate, GMSMapViewDelegate {
     func routeSuccess() {
         self.viewModel.getAllRoutes()
-        self.viewModel.changeRecordingStatus(shouldRecord: self.startButton.isSelected)
     }
 
     func routeFailure(type: ErrorCases) {

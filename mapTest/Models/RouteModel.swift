@@ -28,7 +28,7 @@ struct Route: Codable {
 }
 
 // MARK: - Polyline
-struct Polyline: Codable {
+struct Polyline: Equatable, Codable {
     var points: String
 }
 

@@ -41,9 +41,15 @@ class ApiClient {
     }
 
     private func buildUrl(locations: [CLLocationCoordinate2D]) -> URL? {
-        let source = "\(locations[0].latitude),\(locations[0].longitude)"
-        let destination = "\(locations[1].latitude),\(locations[1].longitude)"
+        guard let coord1 = locations.first,
+              let coord2 = locations.last  else {
+            return nil
+        }
+        
+        let source = "\(coord1.latitude),\(coord1.longitude)"
+        let destination = "\(coord2.latitude),\(coord2.longitude)"
         let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(source)&destination=\(destination)&mode=walking&key=AIzaSyAFCmJTHfdwUprZHZ7pB48Lj6HlYJwKTXw"
+
         if let url = URL(string: urlString) {
             return url
         } else {

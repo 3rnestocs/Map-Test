@@ -12,7 +12,6 @@ protocol MapViewModelType: class {
     func getAllRoutes()
     func updatedLocation() -> CLLocationCoordinate2D?
     func changeRecordingStatus(shouldRecord: Bool)
-    func drawSavedPolylines()
 }
 
 class MapViewModel: MapViewModelType {
@@ -21,9 +20,10 @@ class MapViewModel: MapViewModelType {
     private var viewController: MapViewController!
     private var locations = [CLLocationCoordinate2D]()
     private var routes: [Route]?
-    private var polyLinesArray = [GMSPolyline]()
+    var polyLinesArray = [Polyline]()
     private var nextLocation: CLLocationCoordinate2D?
     private var isRecordingRoute = false
+    var currentLocation: CLLocationCoordinate2D!
     var recentCoordinates = [CLLocationCoordinate2D]()
     weak var delegate: MapViewControllerDelegate?
     var steps: [Step]?
@@ -58,10 +58,9 @@ class MapViewModel: MapViewModelType {
 
     // MARK: - Routes fetching
     func fetchRoutes() {
-        self.recentCoordinates.removeAll()
         if self.locations.count >= 2 {
-            self.recentCoordinates = self.locations.suffix(2)
-            ApiClient.shared.requestPlaces(locations: self.recentCoordinates, completion: { result in
+            self.recentCoordinates.append(contentsOf: self.locations.suffix(2))
+            ApiClient.shared.requestPlaces(locations: self.recentCoordinates.suffix(2), completion: { result in
                 switch result {
                 case .success(let routes):
                     self.routes = routes
@@ -97,48 +96,34 @@ class MapViewModel: MapViewModelType {
     func changeRecordingStatus(shouldRecord: Bool) {
         self.isRecordingRoute = shouldRecord
     }
-    
-    func drawSavedPolylines() {
-        guard let routes = self.getSafely() else { return }
-        for route in routes {
-            self.viewController.createMarker(location: route.route[0], color: UIColor(named: "mainBlack"))
-            self.viewController.createMarker(location: route.route[1], color: UIColor(named: "mainRed"))
-            let point = route.polyLine.points
-            self.createPolyline(from: point)
-        }
-    }
 
     // MARK: - Helpers
     func animateRoutes(steps: [Step]) {
         for (_, step) in steps.enumerated() {
-            let point = step.polyline.points
-            self.createPolyline(from: point)
+            let polyline = step.polyline
+            self.polyLinesArray.append(polyline)
+            self.createPolyline(from: polyline)
         }
     }
     
-    private func createPolyline(from point: String) {
+    private func createPolyline(from polyline: Polyline) {
+        let point = polyline.points
         let path = GMSPath.init(fromEncodedPath: point)!
         let polyLine = GMSPolyline.init(path: path)
-        if !polyLinesArray.contains(polyLine) {
-            polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
-            polyLine.strokeWidth = 5
-            polyLine.map = viewController.mapView
-            polyLinesArray.append(polyLine)
+        polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
+        polyLine.strokeWidth = 5
+        polyLine.map = viewController.mapView
+        if !polyLinesArray.contains(polyline) {
+            polyLinesArray.append(polyline)
         }
     }
 
     func handleRouteSaving(status: Bool) {
-        if status {
-            self.viewController.createMarker(location: self.recentCoordinates.suffix(2)[1], color: UIColor(named: "mainRed"))
+        if status,
+           let lastCoord = self.recentCoordinates.last {
+            self.viewController.createMarker(location: lastCoord, color: UIColor(named: "mainRed"))
             self.viewController.createAlertInput()
         }
-    }
-    
-    private func getSafely() -> [UserRoute]? {
-        guard let data = UserDefaults.standard.data(forKey: "userRoutes"),
-              let routes = try? JSONDecoder().decode([UserRoute].self, from: data)
-        else { return nil }
-        return routes
     }
 }
 
@@ -149,7 +134,8 @@ extension MapViewModel: LocationManagerDelegate {
     func locationManager(_ manager: LocationManager, currentLocation: CLLocationCoordinate2D) {
         self.locations.append(currentLocation)
         self.nextLocation = locations.last
-        self.viewController?.followRoute()
+        self.currentLocation = locations.suffix(2).first
+        self.viewController.followRoute()
         if self.isRecordingRoute {
             self.fetchRoutes()
         }

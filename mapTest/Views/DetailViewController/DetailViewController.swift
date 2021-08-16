@@ -61,7 +61,9 @@ class DetailViewController: UIViewController {
     }
 
     private func updateMapLocation() {
-        guard let route = self.viewModel.detailedRoute?.route[0] else { return }
+        guard let detailedRoute = self.viewModel.detailedRoute else { return }
+        let index = detailedRoute.route.count / 2
+        let route = detailedRoute.route[index]
         let camera = GMSCameraPosition(latitude: route.latitude, longitude: route.longitude, zoom: 15)
         let update = GMSCameraUpdate.setCamera(camera)
         self.mapView.moveCamera(update)
@@ -70,17 +72,20 @@ class DetailViewController: UIViewController {
 
     private func showRoute() {
         guard let route = self.viewModel.detailedRoute else { return }
-        let point = route.polyLine.points
-        let path = GMSPath.init(fromEncodedPath: point)!
-        let polyLine = GMSPolyline.init(path: path)
-        
-        polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
-        polyLine.strokeWidth = 5
-        polyLine.map = self.mapView
+        self.mapView.clear()
+        for polyline in route.polyLines {
+            let point = polyline.points
+            let path = GMSPath.init(fromEncodedPath: point)!
+            let polyLine = GMSPolyline.init(path: path)
+            
+            polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
+            polyLine.strokeWidth = 5
+            polyLine.map = self.mapView
+        }
         
         let coord = route.route
-        createMarker(location: coord[0], color: UIColor(named: "mainBlack"), map: self.mapView)
-        createMarker(location: coord[1], color: UIColor(named: "mainRed"), map: self.mapView)
+        createMarker(location: coord.first!, color: UIColor(named: "mainBlack"), map: self.mapView)
+        createMarker(location: coord.last!, color: UIColor(named: "mainRed"), map: self.mapView)
     }
 
     func createMarker(location: CLLocationCoordinate2D, color: UIColor?, map: GMSMapView) {
@@ -155,6 +160,12 @@ class DetailViewController: UIViewController {
     }
     
     @objc private func shareButtonTouched(_ sender: UIButton) {
-        
+        let text = "Route named: \(self.viewModel.detailedRoute!.name), \(self.viewModel.detailedRoute!.distance) kilometers traveled and \(self.viewModel.detailedRoute!.duration)"
+            let textShare = [text]
+            let activityViewController = UIActivityViewController(activityItems: textShare , applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.view
+        DispatchQueue.main.async {
+            self.present(activityViewController, animated: true, completion: nil)
+        }
     }
 }

@@ -18,7 +18,7 @@ struct UserRoute: Equatable, Codable {
     
     var id: String = UUID().uuidString
     var route: [CLLocationCoordinate2D]
-    var polyLine: Polyline
+    var polyLines: [Polyline]
     var name: String
     var distance: Int
     var duration: String
