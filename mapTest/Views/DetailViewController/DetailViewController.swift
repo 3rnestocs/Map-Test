@@ -55,7 +55,6 @@ class DetailViewController: UIViewController {
         self.mapView = GMSMapView()
         self.view.addSubview(mapView)
         self.mapView.anchor(top: view.safeAreaLayoutGuide.topAnchor, paddingTop: 0, bottom: nil, paddingBottom: 0, left: view.leftAnchor, paddingLeft: 0, right: view.rightAnchor, paddingRight: 0, width: 0, height: 148)
-        self.mapView.delegate = self
     }
 
     private func updateMapLocation() {
@@ -110,8 +109,4 @@ class DetailViewController: UIViewController {
     @objc private func shareButtonTouched(_ sender: UIButton) {
         
     }
-}
-
-extension DetailViewController: GMSMapViewDelegate {
-    
 }

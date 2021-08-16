@@ -10,7 +10,7 @@ import UIKit
 class ListViewController: UIViewController {
 
     let tableView = UITableView()
-    var routeDatasource: [UserRoute]?
+    public var viewModel: ListViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +39,7 @@ class ListViewController: UIViewController {
 
 extension ListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.routeDatasource?.count ?? 0
+        self.viewModel.getRoutes().count
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -57,17 +57,17 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
 
         cell.selectionStyle = .none
         cell.accessoryType = .disclosureIndicator
-        if let userRoute = routeDatasource?[indexPath.row] {
-            cell.configureCell(kilometers: userRoute.distance, route: userRoute.name)
-        }
+        
+        let userRoute = self.viewModel.getRoutes()[indexPath.row]
+        cell.configureCell(kilometers: userRoute.distance, route: userRoute.name)
+        
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let userRoute = routeDatasource?[indexPath.row] {
-            let detailVC = DetailViewController()
-            detailVC.route = userRoute
-            self.navigationController?.pushViewController(detailVC, animated: true)
-        }
+        let userRoute = self.viewModel.getRoutes()[indexPath.row]
+        let detailVC = DetailViewController()
+        detailVC.route = userRoute
+        self.navigationController?.pushViewController(detailVC, animated: true)
     }
 }

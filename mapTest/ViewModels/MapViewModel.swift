@@ -12,6 +12,7 @@ protocol MapViewModelType: class {
     func getAllRoutes()
     func updatedLocation() -> CLLocationCoordinate2D?
     func changeRecordingStatus(shouldRecord: Bool)
+    func drawSavedPolylines()
 }
 
 class MapViewModel: MapViewModelType {
@@ -25,7 +26,7 @@ class MapViewModel: MapViewModelType {
     private var isRecordingRoute = false
     var recentCoordinates = [CLLocationCoordinate2D]()
     weak var delegate: MapViewControllerDelegate?
-    var steps: [Step]!
+    var steps: [Step]?
     var leg: Leg!
 
     // MARK: - Init
@@ -96,21 +97,33 @@ class MapViewModel: MapViewModelType {
     func changeRecordingStatus(shouldRecord: Bool) {
         self.isRecordingRoute = shouldRecord
     }
+    
+    func drawSavedPolylines() {
+        guard let routes = self.getSafely() else { return }
+        for route in routes {
+            self.viewController.createMarker(location: route.route[0], color: UIColor(named: "mainBlack"))
+            self.viewController.createMarker(location: route.route[1], color: UIColor(named: "mainRed"))
+            let point = route.polyLine.points
+            self.createPolyline(from: point)
+        }
+    }
 
     // MARK: - Helpers
     func animateRoutes(steps: [Step]) {
-        if let mapVC = self.viewController {
-            for (_, step) in steps.enumerated() {
-                let point = step.polyline.points
-                let path = GMSPath.init(fromEncodedPath: point)!
-                let polyLine = GMSPolyline.init(path: path)
-                if !polyLinesArray.contains(polyLine) {
-                    polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
-                    polyLine.strokeWidth = 5
-                    polyLine.map = mapVC.mapView
-                    polyLinesArray.append(polyLine)
-                }
-            }
+        for (_, step) in steps.enumerated() {
+            let point = step.polyline.points
+            self.createPolyline(from: point)
+        }
+    }
+    
+    private func createPolyline(from point: String) {
+        let path = GMSPath.init(fromEncodedPath: point)!
+        let polyLine = GMSPolyline.init(path: path)
+        if !polyLinesArray.contains(polyLine) {
+            polyLine.strokeColor = UIColor(named: "mainRed")!.withAlphaComponent(0.8)
+            polyLine.strokeWidth = 5
+            polyLine.map = viewController.mapView
+            polyLinesArray.append(polyLine)
         }
     }
 
@@ -119,6 +132,13 @@ class MapViewModel: MapViewModelType {
             self.viewController.createMarker(location: self.recentCoordinates.suffix(2)[1], color: UIColor(named: "mainRed"))
             self.viewController.createAlertInput()
         }
+    }
+    
+    private func getSafely() -> [UserRoute]? {
+        guard let data = UserDefaults.standard.data(forKey: "userRoutes"),
+              let routes = try? JSONDecoder().decode([UserRoute].self, from: data)
+        else { return nil }
+        return routes
     }
 }
 

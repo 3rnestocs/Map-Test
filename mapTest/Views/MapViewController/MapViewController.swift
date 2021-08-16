@@ -43,6 +43,7 @@ class MapViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         startButton.layer.cornerRadius = startButton.frame.height / 2
+        self.viewModel.drawSavedPolylines()
     }
     
     // MARK: - Setup
@@ -53,7 +54,6 @@ class MapViewController: UIViewController {
     }
 
     private func setupVM() {
-        self.viewModel = MapViewModel(viewController: self)
         self.viewModel.delegate = self
     }
     
@@ -108,8 +108,6 @@ class MapViewController: UIViewController {
         self.marker.icon = UIImage.createMarkerIcon(tintColor: .systemBlue, icon: "circle", size: 24)
         self.marker.map = self.mapView
     }
-
-
     
     // MARK: - Alerts
     func showAlertWith(message: String, title: String, type: AlertType) {
@@ -136,8 +134,12 @@ class MapViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] _ in
             if let textField = alert?.textFields?[0],
                let text = textField.text {
-                let step = self.viewModel.steps.last
-                let routeData = UserRoute(route: self.viewModel.recentCoordinates, polyLine: step!.polyline, name: text, distance: step?.distance.value ?? 0, duration: step?.duration.text ?? "")
+                guard let step = self.viewModel.steps?.last else { return }
+                let routeData = UserRoute(route: self.viewModel.recentCoordinates,
+                                          polyLine: step.polyline,
+                                          name: text,
+                                          distance: step.distance.value,
+                                          duration: step.duration.text)
                 self.delegate?.didSubmitRouteName(routeData: routeData)
             }
         }))
@@ -159,6 +161,7 @@ class MapViewController: UIViewController {
     }
 }
 
+// MARK: - MapViewControllerDelegates
 extension MapViewController: MapViewControllerDelegate, GMSMapViewDelegate {
     func routeSuccess() {
         self.viewModel.getAllRoutes()

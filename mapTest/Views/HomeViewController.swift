@@ -8,10 +8,12 @@
 import UIKit
 
 class HomeViewController: UITabBarController {
-
+    
+    // MARK: - Properties
     private var mapViewController: MapViewController?
     private var listViewController: ListViewController?
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setup()
@@ -20,6 +22,17 @@ class HomeViewController: UITabBarController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.setupNavigationBar()
+    }
+    
+    // MARK: - Setup
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        if let vc = self.viewControllers?.first {
+            if vc.tabBarItem == item {
+                self.title = ""
+            } else {
+                self.title = "Saved routes"
+            }
+        }
     }
 
     private func setup() {
@@ -60,28 +73,18 @@ class HomeViewController: UITabBarController {
         guard let tabOne = self.mapViewController,
               let tabTwo = self.listViewController
         else { return }
+        
+        self.mapViewController?.viewModel = MapViewModel(viewController: tabOne)
+        self.listViewController?.viewModel = ListViewModel(viewController: tabTwo)
 
         self.viewControllers = [tabOne, tabTwo]
     }
 }
 
+// MARK: - MapViewAlertTextDelegate
 extension HomeViewController: MapViewAlertTextDelegate {
     func didSubmitRouteName(routeData: UserRoute) {
-        if self.listViewController?.routeDatasource == nil {
-            self.listViewController?.routeDatasource = [routeData]
-        } else {
-            self.listViewController?.routeDatasource?.append(routeData)
-        }
+        self.listViewController?.viewModel.saveRoutes(route: routeData)
         self.listViewController?.tableView.reloadData()
-    }
-    
-    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        if let vc = self.viewControllers?.first {
-            if vc.tabBarItem == item {
-                self.title = ""
-            } else {
-                self.title = "Saved routes"
-            }
-        }
     }
 }

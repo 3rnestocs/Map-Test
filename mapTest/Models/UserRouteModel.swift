@@ -7,7 +7,7 @@
 
 import GoogleMaps
 
-struct UserRoute {
+struct UserRoute: Codable {
     var id: String = UUID().uuidString
     var route: [CLLocationCoordinate2D]
     var polyLine: Polyline
